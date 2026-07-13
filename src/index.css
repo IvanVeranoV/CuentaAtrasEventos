@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+/* Ajustar los tiempos globales de la animación */
+::view-transition-old(*),
+::view-transition-new(*) {
+  animation-duration: 350ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 🎯 Forzar a que la transición mantenga el punto de pivote en el centro de la tarjeta */
+::view-transition-old(card-*) {
+  object-fit: cover;
+  transform-origin: center;
+}
+
+::view-transition-new(card-*) {
+  object-fit: cover;
+  transform-origin: center;
+}
