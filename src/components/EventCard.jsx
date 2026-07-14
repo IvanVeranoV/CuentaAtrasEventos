@@ -22,6 +22,14 @@ export default function EventCard({ event, onClick, isSelected }) {
     return () => window.clearInterval(intervalId);
   }, [event.date]);
 
+  const runCardTransition = () => {
+    document.startViewTransition(() => {
+      flushSync(() => {
+        onClick();
+      });
+    });
+  };
+
   const handleTransitionClick = () => {
     if (!document.startViewTransition) {
       onClick();
@@ -32,13 +40,7 @@ export default function EventCard({ event, onClick, isSelected }) {
     setClicked(true);
 
     // 2. Esperamos al siguiente frame para asegurar que el navegador capture el DOM sin el ID duplicado
-    requestAnimationFrame(() => {
-      document.startViewTransition(() => {
-        flushSync(() => {
-          onClick();
-        });
-      });
-    });
+    requestAnimationFrame(runCardTransition);
   };
 
   return (
@@ -46,15 +48,20 @@ export default function EventCard({ event, onClick, isSelected }) {
       type="button"
       onClick={handleTransitionClick}
       aria-label={`Abrir detalles de ${event.title}`}
-      // 🎯 Utilizamos la variable calculada en tiempo de renderizado
       style={{ viewTransitionName: (isSelected || isCurrentlyClicked) ? 'none' : `card-${event.id}` }}
-      className="relative group h-96 w-full rounded-3xl overflow-hidden shadow-lg cursor-pointer transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl border border-slate-800 text-left flex flex-col justify-end"
+      className="relative group h-96 w-full rounded-3xl overflow-hidden shadow-lg cursor-pointer transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl border border-slate-800 text-left flex flex-col justify-end bg-slate-950"
     >
-      {/* Imagen de fondo */}
-      <div
-        className="absolute inset-0 bg-cover bg-center transition duration-700 group-hover:scale-105"
-        style={{ backgroundImage: `url(${event.image})` }}
+      {/* 🎯 SOLUCIÓN: Usar una etiqueta <img> con carga diferida (lazy loading) */}
+      {/* Esto evita que el navegador bloquee la pestaña esperando a que la imagen se descargue */}
+      <img
+        src={event.image}
+        alt=""
+        loading="lazy"
+        decoding="async"
+        className="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-105"
       />
+
+      {/* Capas de gradiente estéticas */}
       <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent" />
 
       {/* Contenido en la tarjeta */}

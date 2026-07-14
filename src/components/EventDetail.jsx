@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { flushSync } from 'react-dom';
+import ConfirmModal from './ConfirmModal';
 
 const EMPTY_TIME_LEFT = Object.freeze({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
@@ -7,6 +8,8 @@ export default function EventDetail({ event, onClose, onDelete }) {
   const [timeLeft, setTimeLeft] = useState(EMPTY_TIME_LEFT);
   // 🎯 ESTADO CLAVE: Controla si el modal está en proceso de cierre
   const [isClosing, setIsClosing] = useState(false);
+
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   const eventDate = useMemo(() => new Date(`${event.date}T00:00:00`), [event.date]);
 
@@ -36,6 +39,14 @@ export default function EventDetail({ event, onClose, onDelete }) {
     return () => window.clearInterval(timer);
   }, [eventDate]);
 
+  const runDetailTransition = () => {
+    document.startViewTransition(() => {
+      flushSync(() => {
+        onClose();
+      });
+    });
+  };
+
   const handleTransitionClose = () => {
     if (!document.startViewTransition) {
       onClose();
@@ -46,23 +57,20 @@ export default function EventDetail({ event, onClose, onDelete }) {
     setIsClosing(true);
 
     // 2. Esperamos un frame para que el navegador capture la transición
-    requestAnimationFrame(() => {
-      document.startViewTransition(() => {
-        flushSync(() => {
-          onClose();
-        });
-      });
-    });
+    requestAnimationFrame(runDetailTransition);
+  };
+
+  const handleConfirmDelete = () => {
+    setIsConfirmOpen(false);
+    onDelete(event.id);
   };
 
   return (
-    <div 
-      // 🎯 SOLUCIÓN AL DUPLICADO: Si está cerrándose, el modal cede el nombre inmediatamente 
-      // evitando que coexistan dos elementos con el mismo ID en la consola
+    <div
       style={{ viewTransitionName: isClosing ? 'none' : `card-${event.id}` }}
       className="fixed inset-0 z-50 flex flex-col justify-between bg-slate-950 text-white overflow-y-auto"
     >
-      <div 
+      <div
         className="absolute inset-0 bg-cover bg-center opacity-25 filter blur-sm scale-105 pointer-events-none"
         style={{ backgroundImage: `url(${event.image})` }}
       />
@@ -78,7 +86,7 @@ export default function EventDetail({ event, onClose, onDelete }) {
         </button>
         <button
           type="button"
-          onClick={() => confirm("¿Seguro que quieres eliminar este evento?") && onDelete(event.id)}
+          onClick={() => setIsConfirmOpen(true)}
           className="text-rose-400 hover:text-rose-300 font-medium text-sm transition px-3 py-2 rounded-lg hover:bg-rose-500/10"
         >
           Eliminar
@@ -121,6 +129,13 @@ export default function EventDetail({ event, onClose, onDelete }) {
       </main>
 
       <div className="h-20 w-full pointer-events-none" />
+
+      <ConfirmModal
+        isOpen={isConfirmOpen}
+        onClose={() => setIsConfirmOpen(false)}
+        onConfirm={handleConfirmDelete}
+        eventTitle={event.title}
+      />
     </div>
   );
 }
