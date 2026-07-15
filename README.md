@@ -1,16 +1,83 @@
-# React + Vite
+# Cuenta Atrás Eventos
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Una aplicación web moderna para crear y seguir eventos importantes con un diseño visual atractivo y una experiencia intuitiva. Perfecta para contar los días, horas y minutos que faltan para cumpleaños, viajes, lanzamientos, reuniones o momentos especiales.
 
-Currently, two official plugins are available:
+![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react)
+![Vite](https://img.shields.io/badge/Vite-8-646CFF?style=for-the-badge&logo=vite)
+![JavaScript](https://img.shields.io/badge/JavaScript-ES6-F7DF1E?style=for-the-badge&logo=javascript)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## ✨ ¿Qué puedes hacer con esta app?
 
-## React Compiler
+- Crear eventos personalizados con título, fecha e imagen
+- Ver un contador regresivo en tiempo real para cada evento
+- Guardar tus eventos de forma local en el navegador
+- Exportar e importar datos en formato JSON para moverlos entre dispositivos
+- Disfrutar de una interfaz responsive y visualmente cuidada
+- Recibir notificaciones claras para acciones importantes como importación o exportación
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🛠️ Tecnologías empleadas
 
-## Expanding the ESLint configuration
+- React 19
+- Vite 8
+- JavaScript moderno
+- CSS personalizado y diseño responsive
+- LocalStorage para persistencia de datos
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🚀 Cómo empezar
+
+### Requisitos
+
+- Node.js 18 o superior
+- npm o pnpm
+
+### Instalación
+
+```bash
+git clone https://github.com/IvanVeranoV/CuentaAtrasEventos.git
+cd CuentaAtrasEventos
+npm install
+```
+
+### Ejecutar en modo desarrollo
+
+```bash
+npm run dev
+```
+
+Abre la URL que aparezca en la terminal para ver la aplicación en tu navegador.
+
+### Generar una build de producción
+
+```bash
+npm run build
+```
+
+## 📁 Estructura del proyecto
+
+```text
+src/
+├── components/
+│   ├── EventCard.jsx
+│   ├── EventDetail.jsx
+│   ├── EventForm.jsx
+│   ├── NotificationModal.jsx
+│   └── ConfirmModal.jsx
+├── App.jsx
+├── main.jsx
+└── index.css
+```
+
+## 🎯 Flujo de uso
+
+1. Añade un nuevo evento desde el formulario.
+2. Define su fecha y personaliza los detalles.
+3. Observa el contador regresivo en la tarjeta correspondiente.
+4. Exporta tu lista como JSON si deseas usarla en otro dispositivo.
+
+## 🌟 Estado del proyecto
+
+Este proyecto se encuentra en desarrollo activo y está orientado a ofrecer una solución simple, útil y visual para organizar los momentos más importantes.
+
+## 🤝 Contribuciones
+
+Las contribuciones son bienvenidas. Si tienes ideas, mejoras o encuentras algún problema, puedes abrir un issue o enviar un pull request.
