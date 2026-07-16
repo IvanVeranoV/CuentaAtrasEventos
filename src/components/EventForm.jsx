@@ -1,10 +1,12 @@
 import { useState } from 'react';
 
-export default function EventForm({ onAddEvent }) {
+export default function EventForm({ isOpen, onClose, onAddEvent }) {
   const [title, setTitle] = useState('');
   const [date, setDate] = useState('');
   const [image, setImage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  if (!isOpen) return null;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -12,16 +14,12 @@ export default function EventForm({ onAddEvent }) {
 
     let finalImage = image.trim();
 
-    // Si no introduce imagen, buscamos una usando la API limpia de Wikipedia (sin CORS ni ORB)
     if (!finalImage) {
       setIsLoading(true);
       try {
         const words = title.trim().toLowerCase().split(/\s+/);
-        const sortedWords = [...words].sort((a, b) => b.length - a.length);
-        // Usamos la palabra descriptiva más larga o la última
-        const keyword = sortedWords[0];
+        const keyword = words.toSorted((a, b) => b.length - a.length)[0];
 
-        // Consultamos la API pública de Wikipedia para obtener una imagen asociada a la palabra
         const response = await fetch(
           `https://es.wikipedia.org/w/api.php?action=query&prop=pageimages&format=json&piprop=original&titles=${encodeURIComponent(keyword)}&origin=*`
         );
@@ -29,19 +27,15 @@ export default function EventForm({ onAddEvent }) {
         const data = await response.json();
         const pages = data?.query?.pages;
 
-        // Extraemos la URL directa de la imagen original si existe
         let wikiImage = null;
         if (pages) {
           const pageId = Object.keys(pages)[0];
           wikiImage = pages[pageId]?.original?.source;
         }
 
-        // Si Wikipedia tiene imagen para esa palabra, la guardamos. Si no, usamos nuestro fallback seguro.
         finalImage = wikiImage || 'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=800&auto=format&fit=crop&q=60';
-
       } catch (error) {
         console.error("Error obteniendo la imagen:", error);
-        // Imagen de respaldo definitiva
         finalImage = 'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=800&auto=format&fit=crop&q=60';
       } finally {
         setIsLoading(false);
@@ -50,70 +44,96 @@ export default function EventForm({ onAddEvent }) {
 
     onAddEvent({ title, date, image: finalImage });
 
+    // Resetear formulario y cerrar modal
     setTitle('');
     setDate('');
     setImage('');
+    onClose();
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700">
-      <h2 className="text-xl font-bold mb-4 text-cyan-400">Nuevo Evento</h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-md animate-fade-in">
+      <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl relative">
 
-      <div className="space-y-4">
-        <div>
-          <label htmlFor="event-title" className="block text-sm font-medium text-slate-300 mb-1">
-            Nombre del evento
-          </label>
-          <input
-            id="event-title"
-            type="text"
-            required
-            disabled={isLoading}
-            placeholder="Ej. Nieve, Playa, Concierto..."
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full px-4 py-2 rounded-lg bg-slate-900 border border-slate-600 focus:outline-none focus:border-cyan-500 text-white disabled:opacity-50"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="event-date" className="block text-sm font-medium text-slate-300 mb-1">
-            Fecha
-          </label>
-          <input
-            id="event-date"
-            type="date"
-            required
-            disabled={isLoading}
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="w-full px-4 py-2 rounded-lg bg-slate-900 border border-slate-600 focus:outline-none focus:border-cyan-500 text-white disabled:opacity-50"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="event-image" className="block text-sm font-medium text-slate-300 mb-1">
-            URL de la Imagen de Fondo (Opcional)
-          </label>
-          <input
-            id="event-image"
-            type="url"
-            disabled={isLoading}
-            value={image}
-            onChange={(e) => setImage(e.target.value)}
-            placeholder="Deja vacío para asignación automática"
-            className="w-full px-4 py-2 rounded-lg bg-slate-900 border border-slate-600 focus:outline-none focus:border-cyan-500 text-white placeholder:text-slate-500 text-sm disabled:opacity-50"
-          />
-        </div>
-
+        {/* Botón Cerrar */}
         <button
-          type="submit"
-          disabled={isLoading}
-          className="w-full mt-2 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 disabled:from-slate-700 disabled:to-slate-700 text-white font-bold rounded-xl transition duration-200 shadow-lg active:scale-[0.98] cursor-pointer disabled:cursor-not-allowed flex justify-center items-center gap-2"
+          type="button"
+          onClick={onClose}
+          className="absolute top-4 right-4 text-slate-400 hover:text-white transition cursor-pointer"
         >
-          {isLoading ? 'Buscando imagen fija...' : 'Crear Evento'}
+          ✕
         </button>
+
+        <h2 className="text-2xl font-black mb-6 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-indigo-400">
+          Crear Nuevo Evento
+        </h2>
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label htmlFor="modal-title" className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+              Nombre del evento
+            </label>
+            <input
+              id="modal-title"
+              type="text"
+              required
+              disabled={isLoading}
+              placeholder="Ej. Viaje a la playa"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:outline-none focus:border-cyan-500 text-white disabled:opacity-50 transition"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="modal-date" className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+              Fecha
+            </label>
+            <input
+              id="modal-date"
+              type="date"
+              required
+              disabled={isLoading}
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:outline-none focus:border-cyan-500 text-white disabled:opacity-50 transition"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="modal-image" className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+              URL de la Imagen (Opcional)
+            </label>
+            <input
+              id="modal-image"
+              type="url"
+              disabled={isLoading}
+              value={image}
+              onChange={(e) => setImage(e.target.value)}
+              placeholder="Vacío para búsqueda automática"
+              className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:outline-none focus:border-cyan-500 text-white placeholder:text-slate-600 text-sm disabled:opacity-50 transition"
+            />
+          </div>
+
+          <div className="flex gap-3 pt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={isLoading}
+              className="flex-1 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold rounded-xl transition cursor-pointer text-sm"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="flex-1 py-3 bg-gradient-to-r from-cyan-500 to-indigo-500 hover:from-cyan-400 hover:to-indigo-400 text-white font-bold rounded-xl transition shadow-lg shadow-cyan-500/20 active:scale-[0.98] cursor-pointer disabled:cursor-not-allowed text-sm"
+            >
+              {isLoading ? 'Buscando foto...' : 'Guardar'}
+            </button>
+          </div>
+        </form>
       </div>
-    </form>
+    </div>
   );
 }
