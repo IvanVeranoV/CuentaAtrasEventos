@@ -11,13 +11,17 @@ export default function EventDetail({ event, onClose, onDelete }) {
 
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
-  const eventDate = useMemo(() => new Date(`${event.date}T00:00:00`), [event.date]);
+  const eventDate = useMemo(() => new Date(event.date), [event.date]);
 
-  const formattedDate = useMemo(() =>
-    eventDate.toLocaleDateString('es-ES', {
+  const formattedDate = useMemo(() => {
+    const dateText = eventDate.toLocaleDateString('es-ES', {
       weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
-    }), [eventDate]
-  );
+    });
+    const timeText = eventDate.toLocaleTimeString('es-ES', {
+      hour: '2-digit', minute: '2-digit'
+    });
+    return `${dateText} a las ${timeText}`;
+  }, [eventDate]);
 
   useEffect(() => {
     const calculateTime = () => {
@@ -78,7 +82,7 @@ export default function EventDetail({ event, onClose, onDelete }) {
         referrerPolicy="no-referrer"
         className="absolute inset-0 w-full h-full object-cover filter z-0 scale-105 pointer-events-none"
       />
-      
+
       <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-950/40 to-slate-950 pointer-events-none" />
 
       <header className="relative z-10 max-w-7xl w-full mx-auto px-6 pt-8 flex justify-between items-center">

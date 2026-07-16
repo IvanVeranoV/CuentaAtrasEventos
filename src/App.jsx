@@ -73,12 +73,20 @@ export default function App() {
         return;
       }
 
-      const sanitizedImported = importedEvents.map((ev, index) => ({
-        id: ev.id ? ev.id.toString() : (Date.now() + index).toString(),
-        title: ev.title || 'Evento importado',
-        date: ev.date || new Date().toISOString().split('T')[0],
-        image: ev.image || 'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=800&auto=format&fit=crop&q=60'
-      }));
+      const sanitizedImported = importedEvents.map((ev, index) => {
+        let normalizedDate = new Date().toISOString().slice(0, 16);
+
+        if (ev.date) {
+          normalizedDate = ev.date.includes('T') ? ev.date : `${ev.date}T00:00`;
+        }
+
+        return {
+          id: ev.id ? ev.id.toString() : (Date.now() + index).toString(),
+          title: ev.title || 'Evento importado',
+          date: normalizedDate,
+          image: ev.image || 'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=800&auto=format&fit=crop&q=60'
+        };
+      });
 
       const newEvents = sanitizedImported.filter((importedEv) => {
         const alreadyExists = events.some((currentEv) =>

@@ -11,9 +11,9 @@ export default function EventCard({ event, onClick, isSelected }) {
 
   useEffect(() => {
     const calculateDaysLeft = () => {
-      const targetDate = new Date(`${event.date}T00:00:00`).getTime();
-      const difference = targetDate - Date.now();
-      const days = Math.ceil(difference / (1000 * 60 * 60 * 24));
+      const targetDate = event.date.includes('T') ? event.date : `${event.date}T00:00`;
+      const difference = new Date(targetDate) - Date.now();
+      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
       setDaysLeft(Math.max(0, days));
     };
 

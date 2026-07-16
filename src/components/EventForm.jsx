@@ -3,6 +3,7 @@ import { useState } from 'react';
 export default function EventForm({ isOpen, onClose, onAddEvent }) {
   const [title, setTitle] = useState('');
   const [date, setDate] = useState('');
+  const [time, setTime] = useState('');
   const [image, setImage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -11,6 +12,9 @@ export default function EventForm({ isOpen, onClose, onAddEvent }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title || !date) return;
+
+    const finalTime = !time ? '00:00' : time;
+    const combinedDateTime = `${date}T${finalTime}`;
 
     let finalImage = image.trim();
 
@@ -42,11 +46,12 @@ export default function EventForm({ isOpen, onClose, onAddEvent }) {
       }
     }
 
-    onAddEvent({ title, date, image: finalImage });
+    onAddEvent({ title, date: combinedDateTime, image: finalImage });
 
     // Resetear formulario y cerrar modal
     setTitle('');
     setDate('');
+    setTime('');
     setImage('');
     onClose();
   };
@@ -85,19 +90,36 @@ export default function EventForm({ isOpen, onClose, onAddEvent }) {
             />
           </div>
 
-          <div>
-            <label htmlFor="modal-date" className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
-              Fecha
-            </label>
-            <input
-              id="modal-date"
-              type="date"
-              required
-              disabled={isLoading}
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:outline-none focus:border-cyan-500 text-white disabled:opacity-50 transition"
-            />
+          {/* ... dentro de tu JSX en EventForm.jsx ... */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="modal-date" className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+                Fecha *
+              </label>
+              <input
+                id="modal-date"
+                type="date"
+                required
+                disabled={isLoading}
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:outline-none focus:border-cyan-500 text-white disabled:opacity-50 transition text-sm cursor-pointer"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="modal-time" className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+                Hora <span className="text-slate-600 font-normal text-[10px]">(Opcional)</span>
+              </label>
+              <input
+                id="modal-time"
+                type="time"
+                disabled={isLoading}
+                value={time}
+                onChange={(e) => setTime(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:outline-none focus:border-cyan-500 text-white disabled:opacity-50 transition text-sm cursor-pointer"
+              />
+            </div>
           </div>
 
           <div>
