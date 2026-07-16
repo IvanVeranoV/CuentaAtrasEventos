@@ -57,6 +57,7 @@ export default function EventCard({ event, onClick, isSelected }) {
         src={event.image}
         alt=""
         loading="lazy"
+        referrerPolicy="no-referrer"
         decoding="async"
         className="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-105"
       />

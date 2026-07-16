@@ -70,10 +70,15 @@ export default function EventDetail({ event, onClose, onDelete }) {
       style={{ viewTransitionName: isClosing ? 'none' : `card-${event.id}` }}
       className="fixed inset-0 z-50 flex flex-col justify-between bg-slate-950 text-white overflow-y-auto"
     >
-      <div
-        className="absolute inset-0 bg-cover bg-center opacity-25 filter blur-sm scale-105 pointer-events-none"
-        style={{ backgroundImage: `url(${event.image})` }}
+      <img
+        src={event.image}
+        alt=""
+        loading="eager" // Aquí usamos eager para que intente mostrarse de inmediato al abrir el detalle
+        decoding="async"
+        referrerPolicy="no-referrer"
+        className="absolute inset-0 w-full h-full object-cover filter z-0 scale-105 pointer-events-none"
       />
+      
       <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-950/40 to-slate-950 pointer-events-none" />
 
       <header className="relative z-10 max-w-7xl w-full mx-auto px-6 pt-8 flex justify-between items-center">
