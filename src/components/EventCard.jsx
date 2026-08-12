@@ -13,8 +13,9 @@ export default function EventCard({ event, onClick, isSelected }) {
     const calculateDaysLeft = () => {
       const targetDate = event.date.includes('T') ? event.date : `${event.date}T00:00`;
       const difference = new Date(targetDate) - Date.now();
-      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-      setDaysLeft(Math.max(0, days));
+      const absDiff = Math.abs(difference);
+      const days = Math.floor(absDiff / (1000 * 60 * 60 * 24));
+      setDaysLeft(days);
     };
 
     calculateDaysLeft();
@@ -63,7 +64,7 @@ export default function EventCard({ event, onClick, isSelected }) {
       />
 
       {/* Capas de gradiente estéticas */}
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent" />
+      <div className="absolute inset-0 bg-linear-to-t from-slate-950 via-slate-900/40 to-transparent" />
 
       {/* Contenido en la tarjeta */}
       <div className="relative p-6 z-10 w-full space-y-2">
@@ -73,7 +74,7 @@ export default function EventCard({ event, onClick, isSelected }) {
         <h3 className="text-2xl font-bold text-white tracking-wide line-clamp-2">
           {event.title}
         </h3>
-        <p className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">
+        <p className="text-4xl font-black text-transparent bg-clip-text bg-linear-to-r from-cyan-400 to-emerald-400">
           {daysLeft} <span className="text-sm font-medium text-slate-300 tracking-normal">días restantes</span>
         </p>
       </div>

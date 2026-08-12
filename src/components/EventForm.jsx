@@ -69,7 +69,7 @@ export default function EventForm({ isOpen, onClose, onAddEvent }) {
           ✕
         </button>
 
-        <h2 className="text-2xl font-black mb-6 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-indigo-400">
+        <h2 className="text-2xl font-black mb-6 bg-clip-text text-transparent bg-linear-to-r from-cyan-400 to-indigo-400">
           Crear Nuevo Evento
         </h2>
 
@@ -149,7 +149,7 @@ export default function EventForm({ isOpen, onClose, onAddEvent }) {
             <button
               type="submit"
               disabled={isLoading}
-              className="flex-1 py-3 bg-gradient-to-r from-cyan-500 to-indigo-500 hover:from-cyan-400 hover:to-indigo-400 text-white font-bold rounded-xl transition shadow-lg shadow-cyan-500/20 active:scale-[0.98] cursor-pointer disabled:cursor-not-allowed text-sm"
+              className="flex-1 py-3 bg-linear-to-r from-cyan-500 to-indigo-500 hover:from-cyan-400 hover:to-indigo-400 text-white font-bold rounded-xl transition shadow-lg shadow-cyan-500/20 active:scale-[0.98] cursor-pointer disabled:cursor-not-allowed text-sm"
             >
               {isLoading ? 'Buscando foto...' : 'Guardar'}
             </button>

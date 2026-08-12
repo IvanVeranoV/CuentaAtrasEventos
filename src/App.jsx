@@ -138,7 +138,7 @@ export default function App() {
       {/* Cabecera Principal */}
       <header className="max-w-7xl mx-auto px-6 pt-12 pb-6 flex flex-col sm:flex-row justify-between items-center gap-6 border-b border-slate-900 mb-12">
         <div>
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-indigo-400 to-purple-500">
+          <h1 className="text-3xl sm:text-4xl font-black tracking-tight bg-clip-text text-transparent bg-linear-to-r from-cyan-400 via-indigo-400 to-purple-500">
             Event Horizon
           </h1>
           <p className="text-slate-500 text-sm mt-1">Tus cuentas atrás en tiempo real de forma local.</p>
@@ -176,7 +176,7 @@ export default function App() {
         </div>
         <input type="file" ref={fileInputRef} onChange={importFromJSON} accept=".json" className="hidden" />
 
-        <button
+        <button type="button"
           onClick={() => setIsDeleteAllModalOpen(true)}
           title="Eliminar todos los eventos"
           className="px-3 py-2 text-xs font-bold uppercase tracking-wider bg-red-950/40 hover:bg-red-950/80 text-red-400 border border-red-900/30 hover:border-red-800 rounded-xl transition backdrop-blur-sm cursor-pointer flex items-center gap-1.5 shadow-md"
@@ -211,7 +211,7 @@ export default function App() {
         <button
           type="button"
           onClick={() => setIsFormOpen(true)}
-          className="px-6 py-4 bg-gradient-to-r from-cyan-500 via-indigo-500 to-purple-600 hover:from-cyan-400 hover:via-indigo-400 hover:to-purple-500 text-white font-black rounded-2xl shadow-2xl shadow-indigo-500/30 transition hover:scale-105 active:scale-95 flex items-center gap-3 cursor-pointer text-sm tracking-wide uppercase"
+          className="px-6 py-4 bg-linear-to-r from-cyan-500 via-indigo-500 to-purple-600 hover:from-cyan-400 hover:via-indigo-400 hover:to-purple-500 text-white font-black rounded-2xl shadow-2xl shadow-indigo-500/30 transition hover:scale-105 active:scale-95 flex items-center gap-3 cursor-pointer text-sm tracking-wide uppercase"
         >
           <span className="text-lg leading-none">+</span> Añadir Evento
         </button>
@@ -244,7 +244,7 @@ export default function App() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-orange-400">
+              <h3 className="text-xl font-black text-transparent bg-clip-text bg-linear-to-r from-red-400 to-orange-400">
                 ¿Eliminar todo?
               </h3>
             </div>
@@ -266,7 +266,7 @@ export default function App() {
               <button
                 type="button"
                 onClick={handleConfirmDeleteAll}
-                className="flex-1 py-3 bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-400 hover:to-orange-400 text-white font-bold rounded-xl text-sm transition shadow-lg shadow-red-500/20 active:scale-[0.98] cursor-pointer text-center"
+                className="flex-1 py-3 bg-linear-to-r from-red-500 to-orange-500 hover:from-red-400 hover:to-orange-400 text-white font-bold rounded-xl text-sm transition shadow-lg shadow-red-500/20 active:scale-[0.98] cursor-pointer text-center"
               >
                 Sí, vaciar todo
               </button>

@@ -2,10 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { flushSync } from 'react-dom';
 import ConfirmModal from './ConfirmModal';
 
-const EMPTY_TIME_LEFT = Object.freeze({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-
 export default function EventDetail({ event, onClose, onDelete }) {
-  const [timeLeft, setTimeLeft] = useState(EMPTY_TIME_LEFT);
+  const [timeLeft, setTimeLeft] = useState(0);
   // 🎯 ESTADO CLAVE: Controla si el modal está en proceso de cierre
   const [isClosing, setIsClosing] = useState(false);
 
@@ -26,21 +24,21 @@ export default function EventDetail({ event, onClose, onDelete }) {
   useEffect(() => {
     const calculateTime = () => {
       const difference = eventDate.getTime() - Date.now();
-      if (difference > 0) {
-        setTimeLeft({
-          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-          minutes: Math.floor((difference / 1000 / 60) % 60),
-          seconds: Math.floor((difference / 1000) % 60),
-        });
-        return;
-      }
-      setTimeLeft(EMPTY_TIME_LEFT);
+      const isPast = difference < 0;
+      const absDiff = Math.abs(difference);
+
+      setTimeLeft({
+        isPast,
+        days: Math.floor(absDiff / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((absDiff / (1000 * 60 * 60)) % 24),
+        minutes: Math.floor((absDiff / (1000 * 60)) % 60),
+        seconds: Math.floor((absDiff / 1000) % 60)
+      });
     };
 
     calculateTime();
-    const timer = window.setInterval(calculateTime, 1000);
-    return () => window.clearInterval(timer);
+    const timer = setInterval(calculateTime, 1000);
+    return () => clearInterval(timer);
   }, [eventDate]);
 
   const runDetailTransition = () => {
@@ -83,7 +81,7 @@ export default function EventDetail({ event, onClose, onDelete }) {
         className="absolute inset-0 w-full h-full object-cover filter z-0 scale-105 pointer-events-none"
       />
 
-      <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-950/40 to-slate-950 pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-b from-slate-950/80 via-slate-950/40 to-slate-950 pointer-events-none" />
 
       <header className="relative z-10 max-w-7xl w-full mx-auto px-6 pt-8 flex justify-between items-center">
         <button
@@ -103,9 +101,6 @@ export default function EventDetail({ event, onClose, onDelete }) {
       </header>
 
       <main className="relative z-10 max-w-4xl w-full mx-auto px-6 py-12 flex flex-col items-center text-center my-auto">
-        <span className="text-cyan-400 font-bold tracking-widest uppercase text-xs sm:text-sm bg-cyan-400/10 px-4 py-1.5 rounded-full mb-6">
-          Tiempo Restante
-        </span>
 
         <h1 className="text-4xl sm:text-6xl font-black text-white mb-4 tracking-tight max-w-2xl leading-tight">
           {event.title}
@@ -115,22 +110,28 @@ export default function EventDetail({ event, onClose, onDelete }) {
           {formattedDate}
         </p>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 w-full max-w-3xl">
+        {/* Subtítulo dinámico */}
+        <p className="text-cyan-400 sm:text-lg font-bold uppercase tracking-widest mb-12 bg-slate-950/50 px-4 py-1.5 rounded-full border border-slate-900/30 backdrop-blur-sm">
+          {timeLeft.isPast ? 'Tiempo transcurrido desde el evento' : formattedDate}
+        </p>
+
+        {/* Marcadores numéricos */}
+        <div className="grid grid-cols-4 gap-4 sm:gap-8 max-w-2xl w-full">
           {[
-            { label: 'Días', value: timeLeft.days },
-            { label: 'Horas', value: timeLeft.hours },
-            { label: 'Minutos', value: timeLeft.minutes },
-            { label: 'Segundos', value: timeLeft.seconds },
-          ].map((time) => (
-            <div
-              key={time.label}
-              className="bg-white/[0.03] border border-white/10 rounded-3xl p-6 sm:p-8 backdrop-blur-md shadow-2xl transition hover:border-white/20"
-            >
-              <span className="block text-5xl sm:text-7xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-400">
-                {String(time.value).padStart(2, '0')}
+            { label: 'Días', val: timeLeft.days, key: 'days' },
+            { label: 'Horas', val: timeLeft.hours, key: 'hours' },
+            { label: 'Min', val: timeLeft.minutes, key: 'mins' },
+            { label: 'Seg', val: timeLeft.seconds, key: 'secs' }
+          ].map((item) => (
+            <div key={item.key} className="flex flex-col items-center p-4 bg-slate-900/60 border border-slate-800 rounded-2xl backdrop-blur-md">
+              <span className={`text-3xl sm:text-6xl font-black tracking-tight font-mono text-transparent bg-clip-text ${timeLeft.isPast
+                ? 'bg-linear-to-b from-amber-200 to-orange-500' // Tono cálido para eventos pasados
+                : 'bg-linear-to-b from-white to-slate-400'
+                }`}>
+                {String(item.val).padStart(2, '0')}
               </span>
-              <span className="text-xs sm:text-sm font-semibold text-cyan-400/80 uppercase tracking-widest mt-2 block">
-                {time.label}
+              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 mt-2">
+                {item.label}
               </span>
             </div>
           ))}
