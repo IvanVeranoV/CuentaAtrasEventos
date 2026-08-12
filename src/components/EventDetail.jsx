@@ -22,6 +22,7 @@ export default function EventDetail({ event, onClose, onDelete }) {
   }, [eventDate]);
 
   useEffect(() => {
+    document.body.style.overflow = 'hidden';
     const calculateTime = () => {
       const difference = eventDate.getTime() - Date.now();
       const isPast = difference < 0;
@@ -38,7 +39,10 @@ export default function EventDetail({ event, onClose, onDelete }) {
 
     calculateTime();
     const timer = setInterval(calculateTime, 1000);
-    return () => clearInterval(timer);
+    return () => {
+      document.body.style.overflow = '';
+      clearInterval(timer);
+    };
   }, [eventDate]);
 
   const runDetailTransition = () => {
@@ -70,7 +74,7 @@ export default function EventDetail({ event, onClose, onDelete }) {
   return (
     <div
       style={{ viewTransitionName: isClosing ? 'none' : `card-${event.id}` }}
-      className="fixed inset-0 z-50 flex flex-col justify-between bg-slate-950 text-white overflow-y-auto"
+      className="fixed inset-0 z-50 flex flex-col justify-between bg-slate-950 text-white overflow-hidden"
     >
       <img
         src={event.image}
