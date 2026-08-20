@@ -4,11 +4,33 @@ import EventCard from './components/EventCard';
 import EventDetail from './components/EventDetail';
 import NotificationModal from './components/NotificationModal';
 
-export default function App() {
-  const [events, setEvents] = useState(() => {
+const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=800&auto=format&fit=crop&q=60';
+const MAX_IMPORT_FILE_SIZE = 1024 * 1024;
+const MAX_IMPORTED_EVENTS = 100;
+
+const getSafeImageUrl = (value) => {
+  if (typeof value !== 'string' || !value.trim()) return FALLBACK_IMAGE;
+
+  try {
+    const url = new URL(value.trim());
+    return url.protocol === 'https:' ? url.href : FALLBACK_IMAGE;
+  } catch {
+    return FALLBACK_IMAGE;
+  }
+};
+
+const getStoredEvents = () => {
+  try {
     const saved = localStorage.getItem('countdown_events');
-    return saved ? JSON.parse(saved) : [];
-  });
+    const parsed = saved ? JSON.parse(saved) : [];
+    return Array.isArray(parsed) ? parsed.filter((event) => event && typeof event === 'object') : [];
+  } catch {
+    return [];
+  }
+};
+
+export default function App() {
+  const [events, setEvents] = useState(getStoredEvents);
 
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [isFormOpen, setIsFormOpen] = useState(false); // 🎯 Control del modal del formulario
@@ -27,7 +49,12 @@ export default function App() {
   }, [events]);
 
   const addEvent = (newEvent) => {
-    setEvents([...events, { ...newEvent, id: Date.now().toString() }]);
+    setEvents([...events, {
+      ...newEvent,
+      title: newEvent.title.trim().slice(0, 120),
+      image: getSafeImageUrl(newEvent.image),
+      id: Date.now().toString()
+    }]);
   };
 
   const deleteEvent = (id) => {
@@ -39,9 +66,7 @@ export default function App() {
     setEvents([]);
     setSelectedEvent(null);
     setIsDeleteAllModalOpen(false); // Cierra el modal personalizado
-    if (typeof showNotification === 'function') {
-      showNotification('success', '¡Todo limpio!', 'Se han eliminado todos los eventos de la aplicación.');
-    }
+    showNotification('success', '¡Todo limpio!', 'Se han eliminado todos los eventos de la aplicación.');
   };
 
   const showNotification = (type, title, message) => {
@@ -75,6 +100,11 @@ export default function App() {
     if (!file) return;
 
     try {
+      if (file.size > MAX_IMPORT_FILE_SIZE) {
+        showNotification('error', 'Archivo demasiado grande', 'El archivo JSON no puede superar 1 MB.');
+        return;
+      }
+
       const text = await file.text();
       const importedEvents = JSON.parse(text);
 
@@ -83,18 +113,23 @@ export default function App() {
         return;
       }
 
+      if (importedEvents.length > MAX_IMPORTED_EVENTS) {
+        showNotification('error', 'Demasiados eventos', `El archivo no puede contener más de ${MAX_IMPORTED_EVENTS} eventos.`);
+        return;
+      }
+
       const sanitizedImported = importedEvents.map((ev, index) => {
         let normalizedDate = new Date().toISOString().slice(0, 16);
 
-        if (ev.date) {
+        if (ev && typeof ev.date === 'string' && !Number.isNaN(Date.parse(ev.date))) {
           normalizedDate = ev.date.includes('T') ? ev.date : `${ev.date}T00:00`;
         }
 
         return {
-          id: ev.id ? ev.id.toString() : (Date.now() + index).toString(),
-          title: ev.title || 'Evento importado',
+          id: ev?.id ? ev.id.toString().slice(0, 100) : (Date.now() + index).toString(),
+          title: typeof ev?.title === 'string' && ev.title.trim() ? ev.title.trim().slice(0, 120) : 'Evento importado',
           date: normalizedDate,
-          image: ev.image || 'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=800&auto=format&fit=crop&q=60'
+          image: getSafeImageUrl(ev?.image)
         };
       });
 
@@ -165,10 +200,10 @@ export default function App() {
 
           {/* Botón de Información descriptiva */}
           <div className="group relative">
-            <button type="button" className="w-6 h-6 rounded-full bg-slate-800 text-slate-400 text-xs font-serif flex items-center justify-center cursor-help group-hover:bg-slate-700 group-hover:text-slate-200 transition">
+            <button type="button" aria-label="Mostrar información sobre la sincronización" className="w-6 h-6 rounded-full bg-slate-800 text-slate-400 text-xs font-serif flex items-center justify-center cursor-help group-hover:bg-slate-700 group-hover:text-slate-200 transition">
               i
             </button>
-            <div className="pointer-events-none absolute right-0 top-8 z-9999 w-60 p-3 bg-slate-900 border border-slate-800 text-slate-400 text-xs rounded-xl shadow-2xl opacity-0 group-hover:opacity-100 transition duration-200 leading-relaxed">
+            <div role="tooltip" className="pointer-events-none absolute right-0 top-8 z-9999 w-60 p-3 bg-slate-900 border border-slate-800 text-slate-400 text-xs rounded-xl shadow-2xl opacity-0 group-hover:opacity-100 transition duration-200 leading-relaxed">
               <span className="font-bold text-slate-200 block mb-1">Sincronización Portátil</span>
               <span className="text-white">Usa Exportar</span> para guardar tus eventos en un archivo. Pásalo a tu móvil u otro navegador e indícalo en <span className="text-white">Importar</span> para verlos ahí.
             </div>
@@ -226,7 +261,7 @@ export default function App() {
       {/* 🎯 MODAL PERSONALIZADO DE CONFIRMACIÓN DE BORRADO TOTAL */}
       {isDeleteAllModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
-          <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl relative text-left">
+          <div role="dialog" aria-modal="true" aria-labelledby="delete-all-title" className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl relative text-left">
 
             {/* Botón de Aspa para cerrar */}
             <button
@@ -244,7 +279,7 @@ export default function App() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-black text-transparent bg-clip-text bg-linear-to-r from-red-400 to-orange-400">
+              <h3 id="delete-all-title" className="text-xl font-black text-transparent bg-clip-text bg-linear-to-r from-red-400 to-orange-400">
                 ¿Eliminar todo?
               </h3>
             </div>
@@ -292,6 +327,31 @@ export default function App() {
         title={notification.title}
         message={notification.message}
       />
+
+      <footer className="max-w-7xl mx-auto mt-20 px-6 pt-8 border-t border-slate-900 text-sm text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="text-center sm:text-left">
+          <p className="font-semibold text-slate-300">Desarrollado por Iván Verano</p>
+          <p className="mt-1">2026</p>
+        </div>
+        <nav aria-label="Redes sociales" className="flex items-center gap-5">
+          <a
+            href="https://www.linkedin.com/in/ivan-verano-pena"
+            target="_blank"
+            rel="noreferrer"
+            className="text-slate-400 hover:text-cyan-400 transition-colors"
+          >
+            LinkedIn
+          </a>
+          <a
+            href="https://github.com/IvanVeranoV"
+            target="_blank"
+            rel="noreferrer"
+            className="text-slate-400 hover:text-cyan-400 transition-colors"
+          >
+            GitHub
+          </a>
+        </nav>
+      </footer>
     </div>
 
 

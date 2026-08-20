@@ -73,6 +73,9 @@ export default function EventDetail({ event, onClose, onDelete }) {
 
   return (
     <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="event-detail-title"
       style={{ viewTransitionName: isClosing ? 'none' : `card-${event.id}` }}
       className="fixed inset-0 z-50 flex flex-col justify-between bg-slate-950 text-white overflow-hidden"
     >
@@ -106,7 +109,7 @@ export default function EventDetail({ event, onClose, onDelete }) {
 
       <main className="relative z-10 max-w-4xl w-full mx-auto px-6 py-12 flex flex-col items-center text-center my-auto">
 
-        <h1 className="text-4xl sm:text-6xl font-black text-white mb-4 tracking-tight max-w-2xl leading-tight">
+        <h1 id="event-detail-title" className="text-4xl sm:text-6xl font-black text-white mb-4 tracking-tight max-w-2xl leading-tight">
           {event.title}
         </h1>
 

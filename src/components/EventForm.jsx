@@ -58,7 +58,7 @@ export default function EventForm({ isOpen, onClose, onAddEvent }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-md animate-fade-in">
-      <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl relative">
+      <div role="dialog" aria-modal="true" aria-labelledby="event-form-title" className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl relative">
 
         {/* Botón Cerrar */}
         <button
@@ -69,7 +69,7 @@ export default function EventForm({ isOpen, onClose, onAddEvent }) {
           ✕
         </button>
 
-        <h2 className="text-2xl font-black mb-6 bg-clip-text text-transparent bg-linear-to-r from-cyan-400 to-indigo-400">
+        <h2 id="event-form-title" className="text-2xl font-black mb-6 bg-clip-text text-transparent bg-linear-to-r from-cyan-400 to-indigo-400">
           Crear Nuevo Evento
         </h2>
 

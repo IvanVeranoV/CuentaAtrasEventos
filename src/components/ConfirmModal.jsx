@@ -4,7 +4,7 @@ export default function ConfirmModal({ isOpen, onClose, onConfirm, eventTitle })
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm bg-slate-950/60 animate-fade-in">
             {/* Caja del Modal */}
-            <div className="relative w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl text-center sm:text-left">
+            <div role="dialog" aria-modal="true" aria-labelledby="delete-event-title" className="relative w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl text-center sm:text-left">
 
                 {/* Icono de advertencia */}
                 <div className="mx-auto sm:mx-0 flex h-12 w-12 items-center justify-center rounded-full bg-rose-500/10 text-rose-400 mb-4 sm:mb-0 sm:absolute sm:top-6 sm:left-6">
@@ -15,7 +15,7 @@ export default function ConfirmModal({ isOpen, onClose, onConfirm, eventTitle })
 
                 {/* Contenido de texto */}
                 <div className="sm:pl-16">
-                    <h3 className="text-lg font-bold text-white mb-2">
+                    <h3 id="delete-event-title" className="text-lg font-bold text-white mb-2">
                         ¿Eliminar evento?
                     </h3>
                     <p className="text-sm text-slate-400 leading-relaxed">
