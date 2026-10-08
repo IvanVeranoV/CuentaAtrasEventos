@@ -1,10 +1,11 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import EventForm from './components/EventForm';
 import EventCard from './components/EventCard';
 import EventDetail from './components/EventDetail';
 import NotificationModal from './components/NotificationModal';
 import DeleteAllModal from './components/DeleteAllModal';
-import { FALLBACK_IMAGE, MAX_IMPORT_FILE_SIZE, MAX_IMPORTED_EVENTS } from './utils/constants';
+import useEventFileSync from './hooks/useEventFileSync';
+import { FALLBACK_IMAGE } from './utils/constants';
 
 const getSafeImageUrl = (value) => {
   if (typeof value !== 'string' || !value.trim()) return FALLBACK_IMAGE;
@@ -39,7 +40,6 @@ export default function App() {
   const [selectedEventId, setSelectedEventId] = useState(null);
   const [eventToEdit, setEventToEdit] = useState(null);
   const [isFormOpen, setIsFormOpen] = useState(false); // 🎯 Control del modal del formulario
-  const fileInputRef = useRef(null);
   const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = useState(false);
   const selectedEvent = events.find((event) => event.id === selectedEventId) ?? null;
 
@@ -89,102 +89,13 @@ export default function App() {
     setNotification({ isOpen: true, type, title, message });
   };
 
-  const exportToJSON = () => {
-    if (events.length === 0) {
-      showNotification('error', 'No hay eventos', 'Crea al menos un evento antes de intentar exportar tu lista.');
-      return;
-    }
-    try {
-      const jsonString = JSON.stringify(events, null, 2);
-      const blob = new Blob([jsonString], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.href = url;
-      downloadAnchor.download = "mis_eventos_cuenta_atras.json";
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
-      URL.revokeObjectURL(url);
-      showNotification('success', '¡Exportación exitosa!', 'Tu archivo de respaldo se ha descargado correctamente.');
-    } catch {
-      showNotification('error', 'Error al exportar', 'Ocurrió un problema inesperado al generar el archivo JSON.');
-    }
-  };
-
-  const importFromJSON = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    try {
-      if (file.size > MAX_IMPORT_FILE_SIZE) {
-        showNotification('error', 'Archivo demasiado grande', 'El archivo JSON no puede superar 1 MB.');
-        return;
-      }
-
-      const text = await file.text();
-      const importedEvents = JSON.parse(text);
-
-      if (!Array.isArray(importedEvents)) {
-        showNotification('error', 'Formato inválido', 'El archivo seleccionado no contiene una lista válida.');
-        return;
-      }
-
-      if (importedEvents.length > MAX_IMPORTED_EVENTS) {
-        showNotification('error', 'Demasiados eventos', `El archivo no puede contener más de ${MAX_IMPORTED_EVENTS} eventos.`);
-        return;
-      }
-
-      const sanitizedImported = importedEvents.map((ev, index) => {
-        let normalizedDate = new Date().toISOString().slice(0, 16);
-
-        if (ev && typeof ev.date === 'string' && !Number.isNaN(Date.parse(ev.date))) {
-          normalizedDate = ev.date.includes('T') ? ev.date : `${ev.date}T00:00`;
-        }
-
-        return {
-          id: ev?.id ? ev.id.toString().slice(0, 100) : (Date.now() + index).toString(),
-          title: typeof ev?.title === 'string' && ev.title.trim() ? ev.title.trim().slice(0, 120) : 'Evento importado',
-          date: normalizedDate,
-          image: getSafeImageUrl(ev?.image)
-        };
-      });
-
-      const eventKeys = new Set(events
-        .filter((event) => typeof event.title === 'string')
-        .map((event) => JSON.stringify([event.title.trim().toLowerCase(), event.date])));
-      const newEvents = sanitizedImported.filter((importedEvent) => {
-        const eventKey = JSON.stringify([importedEvent.title.trim().toLowerCase(), importedEvent.date]);
-        if (eventKeys.has(eventKey)) return false;
-
-        eventKeys.add(eventKey);
-        return true;
-      });
-
-      if (newEvents.length === 0) {
-        showNotification(
-          'success',
-          'Sin novedades',
-          'Todos los eventos del archivo ya existen en este dispositivo. No se ha modificado nada.'
-        );
-        return;
-      }
-
-      const updatedEvents = [...events, ...newEvents];
-
-      setEvents(updatedEvents);
-      setSelectedEventId(null);
-
-      showNotification(
-        'success',
-        '¡Fusión completada!',
-        `Se han añadido ${newEvents.length} eventos nuevos. Los eventos duplicados han sido ignorados de forma segura.`
-      );
-    } catch {
-      showNotification('error', 'Error de lectura', 'El archivo JSON está corrupto o es inválido.');
-    } finally {
-      e.target.value = '';
-    }
-  };
+  const { fileInputRef, exportToJSON, importFromJSON } = useEventFileSync({
+    events,
+    setEvents,
+    setSelectedEventId,
+    showNotification,
+    getSafeImageUrl
+  });
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 font-sans pb-24 relative overflow-x-hidden">
