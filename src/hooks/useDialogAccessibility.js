@@ -12,6 +12,7 @@ const FOCUSABLE_SELECTOR = [
 export default function useDialogAccessibility({ isOpen, isActive = true, onClose }) {
   const dialogRef = useRef(null);
   const onCloseRef = useRef(onClose);
+  const hasReceivedInitialFocus = useRef(false);
 
   useEffect(() => {
     if (!isOpen) return undefined;
@@ -30,7 +31,11 @@ export default function useDialogAccessibility({ isOpen, isActive = true, onClos
   }, [onClose]);
 
   useEffect(() => {
-    if (!isOpen || !isActive) return undefined;
+    if (!isOpen) {
+      hasReceivedInitialFocus.current = false;
+      return undefined;
+    }
+    if (!isActive) return undefined;
 
     const dialog = dialogRef.current;
     if (!dialog) return undefined;
@@ -39,10 +44,11 @@ export default function useDialogAccessibility({ isOpen, isActive = true, onClos
       dialog.querySelectorAll(FOCUSABLE_SELECTOR)
     ).filter((element) => element.getClientRects().length > 0);
 
-    const focusableElements = getFocusableElements();
-    if (!dialog.contains(document.activeElement)) {
+    if (!hasReceivedInitialFocus.current) {
+      const focusableElements = getFocusableElements();
       const initialFocus = dialog.querySelector('[data-autofocus]');
       (initialFocus ?? focusableElements[0] ?? dialog).focus();
+      hasReceivedInitialFocus.current = true;
     }
 
     const handleKeyDown = (event) => {
