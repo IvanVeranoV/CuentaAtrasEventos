@@ -151,12 +151,15 @@ export default function App() {
         };
       });
 
-      const newEvents = sanitizedImported.filter((importedEv) => {
-        const alreadyExists = events.some((currentEv) =>
-          currentEv.title.trim().toLowerCase() === importedEv.title.trim().toLowerCase() &&
-          currentEv.date === importedEv.date
-        );
-        return !alreadyExists;
+      const eventKeys = new Set(events
+        .filter((event) => typeof event.title === 'string')
+        .map((event) => JSON.stringify([event.title.trim().toLowerCase(), event.date])));
+      const newEvents = sanitizedImported.filter((importedEvent) => {
+        const eventKey = JSON.stringify([importedEvent.title.trim().toLowerCase(), importedEvent.date]);
+        if (eventKeys.has(eventKey)) return false;
+
+        eventKeys.add(eventKey);
+        return true;
       });
 
       if (newEvents.length === 0) {
