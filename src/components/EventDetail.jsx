@@ -70,6 +70,7 @@ export default function EventDetail({ event, onClose, onDelete, onEdit }) {
 
   return (
     <div
+      role="dialog"
       aria-modal="true"
       aria-labelledby="event-detail-title"
       style={{ viewTransitionName: isClosing ? 'none' : `card-${event.id}` }}
