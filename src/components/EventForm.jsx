@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { FALLBACK_IMAGE } from '../utils/constants';
 import { searchEventImage } from '../utils/searchEventImage';
+import useDialogAccessibility from '../hooks/useDialogAccessibility';
 
 const getDateTimeInputValues = (value) => {
   const eventDate = new Date(value);
@@ -13,7 +14,8 @@ const getDateTimeInputValues = (value) => {
   };
 };
 
-export default function EventForm({ onClose, onAddEvent, onUpdateEvent, eventToEdit }) {
+export default function EventForm({ onClose, onAddEvent, onUpdateEvent, eventToEdit, isActive = true }) {
+  const dialogRef = useDialogAccessibility({ isOpen: true, isActive, onClose });
   const initialDateTime = getDateTimeInputValues(eventToEdit?.date);
   const [title, setTitle] = useState(eventToEdit?.title ?? '');
   const [date, setDate] = useState(initialDateTime.date);
@@ -60,7 +62,15 @@ export default function EventForm({ onClose, onAddEvent, onUpdateEvent, eventToE
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-md animate-fade-in">
-      <div role="dialog" aria-modal="true" aria-labelledby="event-form-title" className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl relative">
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal={isActive}
+        aria-hidden={isActive ? undefined : true}
+        aria-labelledby="event-form-title"
+        tabIndex={-1}
+        className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl relative"
+      >
 
         {/* Botón Cerrar */}
         <button
@@ -85,6 +95,7 @@ export default function EventForm({ onClose, onAddEvent, onUpdateEvent, eventToE
               type="text"
               required
               disabled={isLoading}
+              data-autofocus
               placeholder="Ej. Viaje a la playa"
               value={title}
               aria-invalid={titleError}

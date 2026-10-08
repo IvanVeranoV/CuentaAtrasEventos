@@ -252,6 +252,7 @@ export default function App() {
 
       <DeleteAllModal
         isOpen={isDeleteAllModalOpen}
+        isActive={!notification.isOpen}
         onClose={() => setIsDeleteAllModalOpen(false)}
         onConfirm={handleConfirmDeleteAll}
       />
@@ -263,6 +264,7 @@ export default function App() {
           onClose={() => setSelectedEventId(null)}
           onDelete={deleteEvent}
           onEdit={handleEditEvent}
+          isModalActive={!isFormOpen && !notification.isOpen}
         />
       )}
 
@@ -276,6 +278,7 @@ export default function App() {
           onAddEvent={addEvent}
           onUpdateEvent={updateEvent}
           eventToEdit={eventToEdit}
+          isActive={!notification.isOpen}
         />
       )}
 

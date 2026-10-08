@@ -1,9 +1,20 @@
-export default function DeleteAllModal({ isOpen, onClose, onConfirm }) {
+import useDialogAccessibility from '../hooks/useDialogAccessibility';
+
+export default function DeleteAllModal({ isOpen, isActive = true, onClose, onConfirm }) {
+  const dialogRef = useDialogAccessibility({ isOpen, isActive, onClose });
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
-      <div role="dialog" aria-modal="true" aria-labelledby="delete-all-title" className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl relative text-left">
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal={isActive}
+        aria-hidden={isActive ? undefined : true}
+        aria-labelledby="delete-all-title"
+        tabIndex={-1}
+        className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl relative text-left"
+      >
         <button
           type="button"
           onClick={onClose}

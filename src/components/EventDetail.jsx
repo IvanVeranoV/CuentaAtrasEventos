@@ -2,8 +2,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { flushSync } from 'react-dom';
 import ConfirmModal from './ConfirmModal';
 import { getCountdownParts } from '../utils/countdown';
+import useDialogAccessibility from '../hooks/useDialogAccessibility';
 
-export default function EventDetail({ event, onClose, onDelete, onEdit }) {
+export default function EventDetail({ event, onClose, onDelete, onEdit, isModalActive = true }) {
   const [timeLeft, setTimeLeft] = useState({
     isPast: false,
     days: 0,
@@ -15,6 +16,7 @@ export default function EventDetail({ event, onClose, onDelete, onEdit }) {
   const [isClosing, setIsClosing] = useState(false);
 
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const isDialogActive = isModalActive && !isConfirmOpen;
 
   const eventDate = useMemo(() => new Date(event.date), [event.date]);
 
@@ -63,19 +65,29 @@ export default function EventDetail({ event, onClose, onDelete, onEdit }) {
     requestAnimationFrame(runDetailTransition);
   };
 
+  const dialogRef = useDialogAccessibility({
+    isOpen: true,
+    isActive: isDialogActive,
+    onClose: handleTransitionClose
+  });
+
   const handleConfirmDelete = () => {
     setIsConfirmOpen(false);
     onDelete(event.id);
   };
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="event-detail-title"
-      style={{ viewTransitionName: isClosing ? 'none' : `card-${event.id}` }}
-      className="fixed inset-0 z-50 flex flex-col justify-between bg-slate-950 text-white overflow-hidden"
-    >
+    <>
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal={isDialogActive}
+        aria-hidden={isDialogActive ? undefined : true}
+        aria-labelledby="event-detail-title"
+        tabIndex={-1}
+        style={{ viewTransitionName: isClosing ? 'none' : `card-${event.id}` }}
+        className="fixed inset-0 z-50 flex flex-col justify-between bg-slate-950 text-white overflow-hidden"
+      >
       <img
         src={event.image}
         alt=""
@@ -153,12 +165,14 @@ export default function EventDetail({ event, onClose, onDelete, onEdit }) {
 
       <div className="h-20 w-full pointer-events-none" />
 
+      </div>
       <ConfirmModal
         isOpen={isConfirmOpen}
+        isActive={isModalActive}
         onClose={() => setIsConfirmOpen(false)}
         onConfirm={handleConfirmDelete}
         eventTitle={event.title}
       />
-    </div>
+    </>
   );
 }

@@ -1,6 +1,9 @@
 import { useEffect } from 'react';
+import useDialogAccessibility from '../hooks/useDialogAccessibility';
 
 export default function NotificationModal({ isOpen, onClose, type, title, message }) {
+    const dialogRef = useDialogAccessibility({ isOpen, onClose });
+
     // Auto-cerrar el modal después de 4 segundos para que no sea molesto si es un éxito
     useEffect(() => {
         if (isOpen && type === 'success') {
@@ -16,7 +19,7 @@ export default function NotificationModal({ isOpen, onClose, type, title, messag
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm bg-slate-950/60 animate-fade-in">
             {/* Contenedor del Modal */}
-            <div role="dialog" aria-modal="true" aria-labelledby="notification-title" className="relative w-full max-w-sm bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl text-center">
+            <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="notification-title" tabIndex={-1} className="relative w-full max-w-sm bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl text-center">
 
                 {/* Icono Dinámico */}
                 <div className={`mx-auto flex h-14 w-14 items-center justify-center rounded-full mb-4 ${isSuccess ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'
