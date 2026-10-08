@@ -28,7 +28,18 @@ const getStoredEvents = () => {
   try {
     const saved = localStorage.getItem('countdown_events');
     const parsed = saved ? JSON.parse(saved) : [];
-    return Array.isArray(parsed) ? parsed.filter((event) => event && typeof event === 'object') : [];
+    return Array.isArray(parsed) ? parsed.filter((event) =>
+      event &&
+      typeof event === 'object' &&
+      !Array.isArray(event) &&
+      typeof event.id === 'string' &&
+      event.id.trim() &&
+      typeof event.title === 'string' &&
+      event.title.trim() &&
+      typeof event.date === 'string' &&
+      !Number.isNaN(Date.parse(event.date)) &&
+      typeof event.image === 'string'
+    ) : [];
   } catch {
     return [];
   }
