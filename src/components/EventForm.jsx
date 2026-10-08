@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { FALLBACK_IMAGE } from '../utils/constants';
+import { searchEventImage } from '../utils/searchEventImage';
 
 const getDateTimeInputValues = (value) => {
   const eventDate = new Date(value);
@@ -34,23 +35,7 @@ export default function EventForm({ isOpen, onClose, onAddEvent, onUpdateEvent, 
     if (!finalImage) {
       setIsLoading(true);
       try {
-        const words = title.trim().toLowerCase().split(/\s+/);
-        const keyword = words.toSorted((a, b) => b.length - a.length)[0];
-
-        const response = await fetch(
-          `https://es.wikipedia.org/w/api.php?action=query&prop=pageimages&format=json&piprop=original&titles=${encodeURIComponent(keyword)}&origin=*`
-        );
-
-        const data = await response.json();
-        const pages = data?.query?.pages;
-
-        let wikiImage = null;
-        if (pages) {
-          const pageId = Object.keys(pages)[0];
-          wikiImage = pages[pageId]?.original?.source;
-        }
-
-        finalImage = wikiImage || FALLBACK_IMAGE;
+        finalImage = (await searchEventImage(title)) || FALLBACK_IMAGE;
       } catch (error) {
         console.error("Error obteniendo la imagen:", error);
         finalImage = FALLBACK_IMAGE;
