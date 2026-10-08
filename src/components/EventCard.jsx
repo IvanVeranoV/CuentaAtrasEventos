@@ -23,11 +23,15 @@ export default function EventCard({ event, onClick, isSelected }) {
   }, [event.date]);
 
   const runCardTransition = () => {
-    document.startViewTransition(() => {
+    const transition = document.startViewTransition(() => {
       flushSync(() => {
         onClick();
       });
     });
+    transition.finished.then(
+      () => setClicked(false),
+      () => setClicked(false)
+    );
   };
 
   const handleTransitionClick = () => {
