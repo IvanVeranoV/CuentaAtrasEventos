@@ -3,7 +3,13 @@ import { flushSync } from 'react-dom';
 import ConfirmModal from './ConfirmModal';
 
 export default function EventDetail({ event, onClose, onDelete, onEdit }) {
-  const [timeLeft, setTimeLeft] = useState(0);
+  const [timeLeft, setTimeLeft] = useState({
+    isPast: false,
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0
+  });
   // 🎯 ESTADO CLAVE: Controla si el modal está en proceso de cierre
   const [isClosing, setIsClosing] = useState(false);
 
