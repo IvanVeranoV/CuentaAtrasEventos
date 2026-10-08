@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef } from 'react';
 import { MAX_IMPORT_FILE_SIZE, MAX_IMPORTED_EVENTS } from '../utils/constants';
+import { getUniqueEventId } from '../utils/eventIds';
 
 export default function useEventFileSync({
   events,
@@ -72,16 +73,8 @@ export default function useEventFileSync({
           normalizedDate = event.date.includes('T') ? event.date : `${event.date}T00:00`;
         }
 
-        let id = event?.id ? event.id.toString().slice(0, 100) : (Date.now() + index).toString();
-        if (usedIds.has(id)) {
-          const baseId = id;
-          let suffix = 1;
-          while (usedIds.has(`${baseId}-${suffix}`)) {
-            suffix += 1;
-          }
-          id = `${baseId}-${suffix}`;
-        }
-        usedIds.add(id);
+        const baseId = event?.id ? event.id.toString().slice(0, 100) : (Date.now() + index).toString();
+        const id = getUniqueEventId(baseId, usedIds);
 
         return {
           id,

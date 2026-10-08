@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import EventForm from './components/EventForm';
 import EventCard from './components/EventCard';
 import EventDetail from './components/EventDetail';
@@ -6,6 +6,7 @@ import NotificationModal from './components/NotificationModal';
 import DeleteAllModal from './components/DeleteAllModal';
 import useEventFileSync from './hooks/useEventFileSync';
 import { FALLBACK_IMAGE } from './utils/constants';
+import { getUniqueEventId } from './utils/eventIds';
 
 const getSafeImageUrl = (value) => {
   if (typeof value !== 'string' || !value.trim()) return FALLBACK_IMAGE;
@@ -48,8 +49,7 @@ const getStoredEvents = () => {
       };
     }
 
-    return {
-      events: parsed.filter((event) =>
+    const validEvents = parsed.filter((event) =>
       event &&
       typeof event === 'object' &&
       !Array.isArray(event) &&
@@ -60,7 +60,15 @@ const getStoredEvents = () => {
       typeof event.date === 'string' &&
       !Number.isNaN(Date.parse(event.date)) &&
       typeof event.image === 'string'
-      ),
+    );
+    const reservedIds = new Set(validEvents.map((event) => event.id));
+    const usedIds = new Set();
+
+    return {
+      events: validEvents.map((event) => {
+        const id = getUniqueEventId(event.id, usedIds, reservedIds);
+        return id === event.id ? event : { ...event, id };
+      }),
       canPersist: true,
       error: null
     };
@@ -76,6 +84,7 @@ const getStoredEvents = () => {
 export default function App() {
   const [storedEvents] = useState(getStoredEvents);
   const [events, setEvents] = useState(storedEvents.events);
+  const eventIdCounter = useRef(0);
 
   const [selectedEventId, setSelectedEventId] = useState(null);
   const [eventToEdit, setEventToEdit] = useState(null);
@@ -108,9 +117,15 @@ export default function App() {
   }, [events, storedEvents.canPersist]);
 
   const addEvent = (newEvent) => {
+    const usedIds = new Set(events.map((event) => event.id));
+    const id = getUniqueEventId(
+      `${Date.now()}-${eventIdCounter.current++}`,
+      usedIds
+    );
+
     setEvents((currentEvents) => [
       ...currentEvents,
-      { ...normalizeEventData(newEvent), id: Date.now().toString() }
+      { ...normalizeEventData(newEvent), id }
     ]);
   };
 
