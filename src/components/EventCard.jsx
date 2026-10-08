@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { flushSync } from 'react-dom';
+import { getCountdownParts } from '../utils/countdown';
 
 export default function EventCard({ event, onClick, isSelected }) {
   // 🎯 Estado estructurado para almacenar los días y si la fecha ya pasó
@@ -12,11 +13,7 @@ export default function EventCard({ event, onClick, isSelected }) {
   useEffect(() => {
     const calculateTime = () => {
       const targetDate = event.date.includes('T') ? event.date : `${event.date}T00:00`;
-      const difference = new Date(targetDate).getTime() - Date.now();
-      const isPast = difference < 0;
-      const absDiff = Math.abs(difference);
-      const days = Math.floor(absDiff / (1000 * 60 * 60 * 24));
-
+      const { days, isPast } = getCountdownParts(new Date(targetDate));
       setTimeData({ days, isPast });
     };
 

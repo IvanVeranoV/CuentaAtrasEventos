@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { flushSync } from 'react-dom';
 import ConfirmModal from './ConfirmModal';
+import { getCountdownParts } from '../utils/countdown';
 
 export default function EventDetail({ event, onClose, onDelete, onEdit }) {
   const [timeLeft, setTimeLeft] = useState({
@@ -30,17 +31,7 @@ export default function EventDetail({ event, onClose, onDelete, onEdit }) {
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     const calculateTime = () => {
-      const difference = eventDate.getTime() - Date.now();
-      const isPast = difference < 0;
-      const absDiff = Math.abs(difference);
-
-      setTimeLeft({
-        isPast,
-        days: Math.floor(absDiff / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((absDiff / (1000 * 60 * 60)) % 24),
-        minutes: Math.floor((absDiff / (1000 * 60)) % 60),
-        seconds: Math.floor((absDiff / 1000) % 60)
-      });
+      setTimeLeft(getCountdownParts(eventDate));
     };
 
     calculateTime();
