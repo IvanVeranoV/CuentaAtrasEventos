@@ -36,11 +36,12 @@ const getStoredEvents = () => {
 export default function App() {
   const [events, setEvents] = useState(getStoredEvents);
 
-  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [selectedEventId, setSelectedEventId] = useState(null);
   const [eventToEdit, setEventToEdit] = useState(null);
   const [isFormOpen, setIsFormOpen] = useState(false); // 🎯 Control del modal del formulario
   const fileInputRef = useRef(null);
   const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = useState(false);
+  const selectedEvent = events.find((event) => event.id === selectedEventId) ?? null;
 
   const [notification, setNotification] = useState({
     isOpen: false,
@@ -61,8 +62,8 @@ export default function App() {
   };
 
   const deleteEvent = (id) => {
-    setEvents(events.filter(event => event.id !== id));
-    if (selectedEvent?.id === id) setSelectedEvent(null);
+    setEvents((currentEvents) => currentEvents.filter((event) => event.id !== id));
+    if (selectedEventId === id) setSelectedEventId(null);
   };
 
   const updateEvent = (id, updatedEvent) => {
@@ -70,9 +71,6 @@ export default function App() {
     setEvents((currentEvents) => currentEvents.map((event) => event.id === id
       ? { ...event, ...updatedEventData }
       : event));
-    setSelectedEvent((currentEvent) => currentEvent?.id === id
-      ? { ...currentEvent, ...updatedEventData }
-      : currentEvent);
   };
 
   const handleEditEvent = (event) => {
@@ -82,7 +80,7 @@ export default function App() {
 
   const handleConfirmDeleteAll = () => {
     setEvents([]);
-    setSelectedEvent(null);
+    setSelectedEventId(null);
     setIsDeleteAllModalOpen(false); // Cierra el modal personalizado
     showNotification('success', '¡Todo limpio!', 'Se han eliminado todos los eventos de la aplicación.');
   };
@@ -174,7 +172,7 @@ export default function App() {
       const updatedEvents = [...events, ...newEvents];
 
       setEvents(updatedEvents);
-      setSelectedEvent(null);
+      setSelectedEventId(null);
 
       showNotification(
         'success',
@@ -254,8 +252,8 @@ export default function App() {
               <EventCard
                 key={event.id}
                 event={event}
-                onClick={() => setSelectedEvent(event)}
-                isSelected={selectedEvent?.id === event.id}
+                onClick={() => setSelectedEventId(event.id)}
+                isSelected={selectedEventId === event.id}
               />
             ))}
           </div>
@@ -283,7 +281,7 @@ export default function App() {
       {selectedEvent && (
         <EventDetail
           event={selectedEvent}
-          onClose={() => setSelectedEvent(null)}
+          onClose={() => setSelectedEventId(null)}
           onDelete={deleteEvent}
           onEdit={handleEditEvent}
         />
