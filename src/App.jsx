@@ -3,10 +3,8 @@ import EventForm from './components/EventForm';
 import EventCard from './components/EventCard';
 import EventDetail from './components/EventDetail';
 import NotificationModal from './components/NotificationModal';
-
-const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=800&auto=format&fit=crop&q=60';
-const MAX_IMPORT_FILE_SIZE = 1024 * 1024;
-const MAX_IMPORTED_EVENTS = 100;
+import DeleteAllModal from './components/DeleteAllModal';
+import { FALLBACK_IMAGE, MAX_IMPORT_FILE_SIZE, MAX_IMPORTED_EVENTS } from './utils/constants';
 
 const getSafeImageUrl = (value) => {
   if (typeof value !== 'string' || !value.trim()) return FALLBACK_IMAGE;
@@ -33,6 +31,7 @@ export default function App() {
   const [events, setEvents] = useState(getStoredEvents);
 
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [eventToEdit, setEventToEdit] = useState(null);
   const [isFormOpen, setIsFormOpen] = useState(false); // 🎯 Control del modal del formulario
   const fileInputRef = useRef(null);
   const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = useState(false);
@@ -60,6 +59,25 @@ export default function App() {
   const deleteEvent = (id) => {
     setEvents(events.filter(event => event.id !== id));
     if (selectedEvent?.id === id) setSelectedEvent(null);
+  };
+
+  const updateEvent = (id, updatedEvent) => {
+    const updatedEventData = {
+      ...updatedEvent,
+      title: updatedEvent.title.trim().slice(0, 120),
+      image: getSafeImageUrl(updatedEvent.image)
+    };
+    setEvents((currentEvents) => currentEvents.map((event) => event.id === id
+      ? { ...event, ...updatedEventData }
+      : event));
+    setSelectedEvent((currentEvent) => currentEvent?.id === id
+      ? { ...currentEvent, ...updatedEventData }
+      : currentEvent);
+  };
+
+  const handleEditEvent = (event) => {
+    setEventToEdit(event);
+    setIsFormOpen(true);
   };
 
   const handleConfirmDeleteAll = () => {
@@ -252,63 +270,11 @@ export default function App() {
         </button>
       </div>
 
-      {/* Modal del Formulario */}
-      <EventForm
-        isOpen={isFormOpen}
-        onClose={() => setIsFormOpen(false)}
-        onAddEvent={addEvent}
+      <DeleteAllModal
+        isOpen={isDeleteAllModalOpen}
+        onClose={() => setIsDeleteAllModalOpen(false)}
+        onConfirm={handleConfirmDeleteAll}
       />
-      {/* 🎯 MODAL PERSONALIZADO DE CONFIRMACIÓN DE BORRADO TOTAL */}
-      {isDeleteAllModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
-          <div role="dialog" aria-modal="true" aria-labelledby="delete-all-title" className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl relative text-left">
-
-            {/* Botón de Aspa para cerrar */}
-            <button
-              type="button"
-              onClick={() => setIsDeleteAllModalOpen(false)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-white transition cursor-pointer"
-            >
-              ✕
-            </button>
-
-            {/* Cabecera de Alerta */}
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-red-950/50 border border-red-900/40 rounded-xl text-red-400">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
-                </svg>
-              </div>
-              <h3 id="delete-all-title" className="text-xl font-black text-transparent bg-clip-text bg-linear-to-r from-red-400 to-orange-400">
-                ¿Eliminar todo?
-              </h3>
-            </div>
-
-            {/* Cuerpo del Mensaje */}
-            <p className="text-slate-300 text-sm leading-relaxed mb-6">
-              Estás a punto de borrar <span className="text-red-400 font-semibold">todos los eventos</span> creados en la aplicación. Esta acción vaciará el almacenamiento local y no se puede deshacer.
-            </p>
-
-            {/* Botones de Acción integrados */}
-            <div className="flex gap-3">
-              <button
-                type="button"
-                onClick={() => setIsDeleteAllModalOpen(false)}
-                className="flex-1 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold rounded-xl text-sm transition cursor-pointer"
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                onClick={handleConfirmDeleteAll}
-                className="flex-1 py-3 bg-linear-to-r from-red-500 to-orange-500 hover:from-red-400 hover:to-orange-400 text-white font-bold rounded-xl text-sm transition shadow-lg shadow-red-500/20 active:scale-[0.98] cursor-pointer text-center"
-              >
-                Sí, vaciar todo
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Vista Detalle */}
       {selectedEvent && (
@@ -316,6 +282,21 @@ export default function App() {
           event={selectedEvent}
           onClose={() => setSelectedEvent(null)}
           onDelete={deleteEvent}
+          onEdit={handleEditEvent}
+        />
+      )}
+
+      {/* El formulario se renderiza después del detalle para aparecer encima sin desmontarlo. */}
+      {isFormOpen && (
+        <EventForm
+          isOpen={isFormOpen}
+          onClose={() => {
+            setIsFormOpen(false);
+            setEventToEdit(null);
+          }}
+          onAddEvent={addEvent}
+          onUpdateEvent={updateEvent}
+          eventToEdit={eventToEdit}
         />
       )}
 

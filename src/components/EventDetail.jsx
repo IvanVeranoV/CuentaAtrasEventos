@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { flushSync } from 'react-dom';
 import ConfirmModal from './ConfirmModal';
 
-export default function EventDetail({ event, onClose, onDelete }) {
+export default function EventDetail({ event, onClose, onDelete, onEdit }) {
   const [timeLeft, setTimeLeft] = useState(0);
   // 🎯 ESTADO CLAVE: Controla si el modal está en proceso de cierre
   const [isClosing, setIsClosing] = useState(false);
@@ -73,7 +73,6 @@ export default function EventDetail({ event, onClose, onDelete }) {
 
   return (
     <div
-      role="dialog"
       aria-modal="true"
       aria-labelledby="event-detail-title"
       style={{ viewTransitionName: isClosing ? 'none' : `card-${event.id}` }}
@@ -98,13 +97,22 @@ export default function EventDetail({ event, onClose, onDelete }) {
         >
           ← Volver al panel
         </button>
-        <button
-          type="button"
-          onClick={() => setIsConfirmOpen(true)}
-          className="text-rose-400 hover:text-rose-300 font-medium text-sm transition px-3 py-2 rounded-lg hover:bg-rose-500/10"
-        >
-          Eliminar
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => onEdit(event)}
+            className="text-white hover:text-white/80 transition px-4 py-2 bg-white/10 hover:bg-white/20 active:scale-95 backdrop-blur-md rounded-xl border border-white/10 font-medium text-sm"
+          >
+            Editar
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsConfirmOpen(true)}
+            className="text-rose-400 hover:text-rose-300 font-medium text-sm transition px-4 py-2 bg-rose-500/10 hover:bg-rose-500/20 active:scale-95 backdrop-blur-md rounded-xl border border-rose-500/20"
+          >
+            Eliminar
+          </button>
+        </div>
       </header>
 
       <main className="relative z-10 max-w-4xl w-full mx-auto px-6 py-12 flex flex-col items-center text-center my-auto">

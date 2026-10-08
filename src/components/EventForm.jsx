@@ -1,10 +1,23 @@
 import { useState } from 'react';
+import { FALLBACK_IMAGE } from '../utils/constants';
 
-export default function EventForm({ isOpen, onClose, onAddEvent }) {
-  const [title, setTitle] = useState('');
-  const [date, setDate] = useState('');
-  const [time, setTime] = useState('');
-  const [image, setImage] = useState('');
+const getDateTimeInputValues = (value) => {
+  const eventDate = new Date(value);
+  if (Number.isNaN(eventDate.getTime())) return { date: '', time: '' };
+
+  const pad = (part) => String(part).padStart(2, '0');
+  return {
+    date: `${eventDate.getFullYear()}-${pad(eventDate.getMonth() + 1)}-${pad(eventDate.getDate())}`,
+    time: `${pad(eventDate.getHours())}:${pad(eventDate.getMinutes())}`
+  };
+};
+
+export default function EventForm({ isOpen, onClose, onAddEvent, onUpdateEvent, eventToEdit }) {
+  const initialDateTime = getDateTimeInputValues(eventToEdit?.date);
+  const [title, setTitle] = useState(eventToEdit?.title ?? '');
+  const [date, setDate] = useState(initialDateTime.date);
+  const [time, setTime] = useState(initialDateTime.time);
+  const [image, setImage] = useState(eventToEdit?.image ?? '');
   const [isLoading, setIsLoading] = useState(false);
 
   if (!isOpen) return null;
@@ -37,16 +50,21 @@ export default function EventForm({ isOpen, onClose, onAddEvent }) {
           wikiImage = pages[pageId]?.original?.source;
         }
 
-        finalImage = wikiImage || 'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=800&auto=format&fit=crop&q=60';
+        finalImage = wikiImage || FALLBACK_IMAGE;
       } catch (error) {
         console.error("Error obteniendo la imagen:", error);
-        finalImage = 'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=800&auto=format&fit=crop&q=60';
+        finalImage = FALLBACK_IMAGE;
       } finally {
         setIsLoading(false);
       }
     }
 
-    onAddEvent({ title, date: combinedDateTime, image: finalImage });
+    const updatedEvent = { title, date: combinedDateTime, image: finalImage };
+    if (eventToEdit) {
+      onUpdateEvent(eventToEdit.id, updatedEvent);
+    } else {
+      onAddEvent(updatedEvent);
+    }
 
     // Resetear formulario y cerrar modal
     setTitle('');
@@ -70,7 +88,7 @@ export default function EventForm({ isOpen, onClose, onAddEvent }) {
         </button>
 
         <h2 id="event-form-title" className="text-2xl font-black mb-6 bg-clip-text text-transparent bg-linear-to-r from-cyan-400 to-indigo-400">
-          Crear Nuevo Evento
+          {eventToEdit ? 'Editar Evento' : 'Crear Nuevo Evento'}
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -151,7 +169,7 @@ export default function EventForm({ isOpen, onClose, onAddEvent }) {
               disabled={isLoading}
               className="flex-1 py-3 bg-linear-to-r from-cyan-500 to-indigo-500 hover:from-cyan-400 hover:to-indigo-400 text-white font-bold rounded-xl transition shadow-lg shadow-cyan-500/20 active:scale-[0.98] cursor-pointer disabled:cursor-not-allowed text-sm"
             >
-              {isLoading ? 'Buscando foto...' : 'Guardar'}
+              {isLoading ? 'Buscando foto...' : eventToEdit ? 'Guardar cambios' : 'Guardar'}
             </button>
           </div>
         </form>
