@@ -52,6 +52,14 @@ Abre la URL que aparezca en la terminal para ver la aplicación en tu navegador.
 npm run build
 ```
 
+### Ejecutar las pruebas automatizadas
+
+```bash
+npm test
+```
+
+Las pruebas de integración se ejecutan con Vitest y React Testing Library en un entorno jsdom.
+
 ## 📁 Estructura del proyecto
 
 ```text
