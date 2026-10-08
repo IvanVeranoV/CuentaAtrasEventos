@@ -17,6 +17,12 @@ const getSafeImageUrl = (value) => {
   }
 };
 
+const normalizeEventData = (eventData) => ({
+  ...eventData,
+  title: eventData.title.trim().slice(0, 120),
+  image: getSafeImageUrl(eventData.image)
+});
+
 const getStoredEvents = () => {
   try {
     const saved = localStorage.getItem('countdown_events');
@@ -48,12 +54,10 @@ export default function App() {
   }, [events]);
 
   const addEvent = (newEvent) => {
-    setEvents([...events, {
-      ...newEvent,
-      title: newEvent.title.trim().slice(0, 120),
-      image: getSafeImageUrl(newEvent.image),
-      id: Date.now().toString()
-    }]);
+    setEvents((currentEvents) => [
+      ...currentEvents,
+      { ...normalizeEventData(newEvent), id: Date.now().toString() }
+    ]);
   };
 
   const deleteEvent = (id) => {
@@ -62,11 +66,7 @@ export default function App() {
   };
 
   const updateEvent = (id, updatedEvent) => {
-    const updatedEventData = {
-      ...updatedEvent,
-      title: updatedEvent.title.trim().slice(0, 120),
-      image: getSafeImageUrl(updatedEvent.image)
-    };
+    const updatedEventData = normalizeEventData(updatedEvent);
     setEvents((currentEvents) => currentEvents.map((event) => event.id === id
       ? { ...event, ...updatedEventData }
       : event));
