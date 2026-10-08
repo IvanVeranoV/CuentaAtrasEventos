@@ -56,6 +56,9 @@ export default function useEventFileSync({
         return;
       }
 
+      const usedIds = new Set(events
+        .filter((event) => event.id !== null && event.id !== undefined)
+        .map((event) => String(event.id)));
       const sanitizedImported = importedEvents.map((event, index) => {
         let normalizedDate = new Date().toISOString().slice(0, 16);
 
@@ -63,8 +66,19 @@ export default function useEventFileSync({
           normalizedDate = event.date.includes('T') ? event.date : `${event.date}T00:00`;
         }
 
+        let id = event?.id ? event.id.toString().slice(0, 100) : (Date.now() + index).toString();
+        if (usedIds.has(id)) {
+          const baseId = id;
+          let suffix = 1;
+          while (usedIds.has(`${baseId}-${suffix}`)) {
+            suffix += 1;
+          }
+          id = `${baseId}-${suffix}`;
+        }
+        usedIds.add(id);
+
         return {
-          id: event?.id ? event.id.toString().slice(0, 100) : (Date.now() + index).toString(),
+          id,
           title: typeof event?.title === 'string' && event.title.trim()
             ? event.title.trim().slice(0, 120)
             : 'Evento importado',
