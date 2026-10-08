@@ -20,10 +20,16 @@ export default function EventForm({ onClose, onAddEvent, onUpdateEvent, eventToE
   const [time, setTime] = useState(initialDateTime.time);
   const [image, setImage] = useState(eventToEdit?.image ?? '');
   const [isLoading, setIsLoading] = useState(false);
+  const [titleError, setTitleError] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!title || !date) return;
+    const normalizedTitle = title.trim();
+    if (!normalizedTitle) {
+      setTitleError(true);
+      return;
+    }
+    if (!date) return;
 
     const finalTime = !time ? '00:00' : time;
     const combinedDateTime = `${date}T${finalTime}`;
@@ -33,7 +39,7 @@ export default function EventForm({ onClose, onAddEvent, onUpdateEvent, eventToE
     if (!finalImage) {
       setIsLoading(true);
       try {
-        finalImage = (await searchEventImage(title)) || FALLBACK_IMAGE;
+        finalImage = (await searchEventImage(normalizedTitle)) || FALLBACK_IMAGE;
       } catch (error) {
         console.error("Error obteniendo la imagen:", error);
         finalImage = FALLBACK_IMAGE;
@@ -42,7 +48,7 @@ export default function EventForm({ onClose, onAddEvent, onUpdateEvent, eventToE
       }
     }
 
-    const updatedEvent = { title, date: combinedDateTime, image: finalImage };
+    const updatedEvent = { title: normalizedTitle, date: combinedDateTime, image: finalImage };
     if (eventToEdit) {
       onUpdateEvent(eventToEdit.id, updatedEvent);
     } else {
@@ -81,9 +87,19 @@ export default function EventForm({ onClose, onAddEvent, onUpdateEvent, eventToE
               disabled={isLoading}
               placeholder="Ej. Viaje a la playa"
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              aria-invalid={titleError}
+              aria-describedby={titleError ? 'modal-title-error' : undefined}
+              onChange={(e) => {
+                setTitle(e.target.value);
+                setTitleError(false);
+              }}
               className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:outline-none focus:border-cyan-500 text-white disabled:opacity-50 transition"
             />
+            {titleError && (
+              <p id="modal-title-error" className="mt-2 text-sm text-rose-400">
+                El nombre del evento no puede estar vacío.
+              </p>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
