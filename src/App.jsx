@@ -27,8 +27,29 @@ const normalizeEventData = (eventData) => ({
 const getStoredEvents = () => {
   try {
     const saved = localStorage.getItem('countdown_events');
-    const parsed = saved ? JSON.parse(saved) : [];
-    return Array.isArray(parsed) ? parsed.filter((event) =>
+    if (!saved) return { events: [], canPersist: true, error: null };
+
+    let parsed;
+    try {
+      parsed = JSON.parse(saved);
+    } catch {
+      return {
+        events: [],
+        canPersist: false,
+        error: 'Los eventos guardados no se pueden leer porque el contenido está dañado. No se guardarán cambios para evitar sobrescribir esos datos.'
+      };
+    }
+
+    if (!Array.isArray(parsed)) {
+      return {
+        events: [],
+        canPersist: false,
+        error: 'Los eventos guardados tienen un formato inválido. No se guardarán cambios para evitar sobrescribir esos datos.'
+      };
+    }
+
+    return {
+      events: parsed.filter((event) =>
       event &&
       typeof event === 'object' &&
       !Array.isArray(event) &&
@@ -39,14 +60,22 @@ const getStoredEvents = () => {
       typeof event.date === 'string' &&
       !Number.isNaN(Date.parse(event.date)) &&
       typeof event.image === 'string'
-    ) : [];
+      ),
+      canPersist: true,
+      error: null
+    };
   } catch {
-    return [];
+    return {
+      events: [],
+      canPersist: false,
+      error: 'No se pudieron leer los eventos guardados en este navegador. No se guardarán cambios para evitar sobrescribir datos existentes.'
+    };
   }
 };
 
 export default function App() {
-  const [events, setEvents] = useState(getStoredEvents);
+  const [storedEvents] = useState(getStoredEvents);
+  const [events, setEvents] = useState(storedEvents.events);
 
   const [selectedEventId, setSelectedEventId] = useState(null);
   const [eventToEdit, setEventToEdit] = useState(null);
@@ -55,15 +84,28 @@ export default function App() {
   const selectedEvent = events.find((event) => event.id === selectedEventId) ?? null;
 
   const [notification, setNotification] = useState({
-    isOpen: false,
-    type: 'success',
-    title: '',
-    message: ''
+    isOpen: Boolean(storedEvents.error),
+    type: storedEvents.error ? 'error' : 'success',
+    title: storedEvents.error ? 'Error al cargar eventos' : '',
+    message: storedEvents.error ?? ''
   });
 
   useEffect(() => {
-    localStorage.setItem('countdown_events', JSON.stringify(events));
-  }, [events]);
+    if (!storedEvents.canPersist) return;
+
+    try {
+      localStorage.setItem('countdown_events', JSON.stringify(events));
+    } catch {
+      window.setTimeout(() => {
+        setNotification({
+          isOpen: true,
+          type: 'error',
+          title: 'Error al guardar eventos',
+          message: 'No se pudieron guardar los eventos en este navegador. Los cambios actuales solo están en memoria; expórtalos antes de cerrar la página.'
+        });
+      });
+    }
+  }, [events, storedEvents.canPersist]);
 
   const addEvent = (newEvent) => {
     setEvents((currentEvents) => [
