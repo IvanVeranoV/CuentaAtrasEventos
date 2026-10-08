@@ -13,15 +13,13 @@ const getDateTimeInputValues = (value) => {
   };
 };
 
-export default function EventForm({ isOpen, onClose, onAddEvent, onUpdateEvent, eventToEdit }) {
+export default function EventForm({ onClose, onAddEvent, onUpdateEvent, eventToEdit }) {
   const initialDateTime = getDateTimeInputValues(eventToEdit?.date);
   const [title, setTitle] = useState(eventToEdit?.title ?? '');
   const [date, setDate] = useState(initialDateTime.date);
   const [time, setTime] = useState(initialDateTime.time);
   const [image, setImage] = useState(eventToEdit?.image ?? '');
   const [isLoading, setIsLoading] = useState(false);
-
-  if (!isOpen) return null;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -51,11 +49,6 @@ export default function EventForm({ isOpen, onClose, onAddEvent, onUpdateEvent, 
       onAddEvent(updatedEvent);
     }
 
-    // Resetear formulario y cerrar modal
-    setTitle('');
-    setDate('');
-    setTime('');
-    setImage('');
     onClose();
   };
 
@@ -93,7 +86,6 @@ export default function EventForm({ isOpen, onClose, onAddEvent, onUpdateEvent, 
             />
           </div>
 
-          {/* ... dentro de tu JSX en EventForm.jsx ... */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label htmlFor="modal-date" className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">

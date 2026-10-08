@@ -201,7 +201,6 @@ export default function App() {
       {/* El formulario se renderiza después del detalle para aparecer encima sin desmontarlo. */}
       {isFormOpen && (
         <EventForm
-          isOpen={isFormOpen}
           onClose={() => {
             setIsFormOpen(false);
             setEventToEdit(null);
