@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import { MAX_IMPORT_FILE_SIZE, MAX_IMPORTED_EVENTS } from '../utils/constants';
 
 export default function useEventFileSync({
@@ -9,6 +9,11 @@ export default function useEventFileSync({
   getSafeImageUrl
 }) {
   const fileInputRef = useRef(null);
+  const currentEventsRef = useRef(events);
+
+  useLayoutEffect(() => {
+    currentEventsRef.current = events;
+  }, [events]);
 
   const exportToJSON = () => {
     if (events.length === 0) {
@@ -56,7 +61,8 @@ export default function useEventFileSync({
         return;
       }
 
-      const usedIds = new Set(events
+      const currentEvents = currentEventsRef.current;
+      const usedIds = new Set(currentEvents
         .filter((event) => event.id !== null && event.id !== undefined)
         .map((event) => String(event.id)));
       const sanitizedImported = importedEvents.map((event, index) => {
@@ -87,7 +93,7 @@ export default function useEventFileSync({
         };
       });
 
-      const eventKeys = new Set(events
+      const eventKeys = new Set(currentEvents
         .filter((event) => typeof event.title === 'string')
         .map((event) => JSON.stringify([event.title.trim().toLowerCase(), event.date])));
       const newEvents = sanitizedImported.filter((event) => {
@@ -107,7 +113,7 @@ export default function useEventFileSync({
         return;
       }
 
-      setEvents([...events, ...newEvents]);
+      setEvents([...currentEvents, ...newEvents]);
       setSelectedEventId(null);
       showNotification(
         'success',
