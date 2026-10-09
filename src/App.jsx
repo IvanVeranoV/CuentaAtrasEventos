@@ -215,8 +215,8 @@ export default function App() {
               <span aria-hidden="true" className="text-lg leading-none">+</span> Añadir Evento
             </button>
 
-            <details className="group relative">
-              <summary className="flex cursor-pointer list-none items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-xs sm:text-sm font-semibold text-slate-200 transition-colors hover:bg-white/10 [&::-webkit-details-marker]:hidden">
+            <details className="group relative w-full sm:w-auto">
+              <summary className="flex w-full cursor-pointer list-none items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-xs sm:text-sm font-semibold text-slate-200 transition-colors hover:bg-white/10 [&::-webkit-details-marker]:hidden sm:w-auto">
                 <span>Importar / exportar</span>
                 <span aria-hidden="true" className="text-neutral-400 transition-transform group-open:rotate-180">▾</span>
               </summary>

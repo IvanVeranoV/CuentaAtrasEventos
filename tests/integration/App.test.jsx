@@ -179,7 +179,7 @@ describe('accesibilidad del formulario modal', () => {
     expect(dataDisclosure.open).toBe(true);
     expect(dataDisclosure.querySelectorAll('button')).toHaveLength(2);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Eliminar todos' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Eliminar todo' }));
     expect(screen.getByRole('alertdialog', { name: '¿Eliminar todo?' })).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: 'Cancelar' }));
     expect(screen.getByRole('button', { name: /Abrir detalles de Evento accesible/ })).toBeTruthy();
