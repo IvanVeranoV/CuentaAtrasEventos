@@ -14,6 +14,7 @@ Una aplicación web para crear y seguir eventos importantes con cuentas atrás e
 - Guardar tus eventos de forma local en el navegador
 - Exportar e importar datos en formato JSON para moverlos entre dispositivos
 - Editar y eliminar eventos individualmente o vaciar la lista completa
+- Acceder a importar y exportar desde un desplegable; el borrado de todos los eventos permanece visible y requiere confirmación
 - Disfrutar de una interfaz responsive y visualmente cuidada
 - Usar una interfaz fluida en móviles, tabletas y escritorio, con tarjetas y contadores que se reorganizan según el ancho disponible
 - Recibir notificaciones claras para acciones importantes como importación o exportación

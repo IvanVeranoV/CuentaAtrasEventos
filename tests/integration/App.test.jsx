@@ -165,18 +165,24 @@ describe('accesibilidad del formulario modal', () => {
     expect(screen.getByRole('dialog', { name: 'Evento editable' })).toBeTruthy();
   });
 
-  it('expone el tooltip de sincronización al enfocarlo y conserva los encabezados de las tarjetas', () => {
+  it('agrupa importar y exportar, y mantiene el borrado directo con confirmación', () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify([
       createStoredEvent({ title: 'Evento accesible' })
     ]));
 
     render(<App />);
 
-    const tooltipTrigger = screen.getByRole('button', { name: 'Información sobre la sincronización' });
-    tooltipTrigger.focus();
+    const dataMenu = screen.getByText('Importar / exportar');
+    const dataDisclosure = dataMenu.closest('details');
+    expect(dataDisclosure.open).toBe(false);
+    fireEvent.click(dataDisclosure.querySelector('summary'));
+    expect(dataDisclosure.open).toBe(true);
+    expect(dataDisclosure.querySelectorAll('button')).toHaveLength(2);
 
-    expect(tooltipTrigger.getAttribute('aria-describedby')).toBe('sync-tooltip');
-    expect(screen.getByRole('tooltip').textContent).toContain('Usa Exportar');
+    fireEvent.click(screen.getByRole('button', { name: 'Eliminar todos' }));
+    expect(screen.getByRole('alertdialog', { name: '¿Eliminar todo?' })).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Cancelar' }));
+    expect(screen.getByRole('button', { name: /Abrir detalles de Evento accesible/ })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 2, name: 'Evento accesible' })).toBeTruthy();
   });
 

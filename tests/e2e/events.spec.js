@@ -54,7 +54,8 @@ test('imports events and exports the saved event list', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Abrir detalles de Evento importado' })).toBeVisible();
 
   const downloadPromise = page.waitForEvent('download');
-  await page.getByRole('button', { name: /Exportar/ }).click();
+  await page.getByText('Importar / exportar').click();
+  await page.getByRole('button', { name: 'Exportar eventos' }).click();
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe('mis_eventos_cuenta_atras.json');
 
@@ -86,7 +87,7 @@ test('adapts the event grid, form, and detail view to narrow screens without hor
 
   await addEvent(page, 'Evento móvil uno');
   await addEvent(page, 'Evento móvil dos');
-  const eventGrid = page.locator('main > div.grid');
+  const eventGrid = page.locator('main div.grid').filter({ has: page.getByRole('button', { name: /Abrir detalles de Evento móvil uno/ }) });
   const eventCard = page.getByRole('button', { name: /Abrir detalles de Evento móvil uno/ });
   const datePill = eventCard.locator('span.rounded-full');
   const addEventButton = page.getByRole('button', { name: 'Añadir Evento' });
