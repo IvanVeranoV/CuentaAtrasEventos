@@ -167,7 +167,7 @@ export default function App() {
   });
 
   return (
-    <div className="min-h-screen bg-[#0a0a0c] text-slate-100 font-sans pb-16 sm:pb-24 relative overflow-x-hidden">
+    <div className="min-h-screen bg-app-bg text-slate-100 font-sans pb-16 sm:pb-24 relative overflow-x-hidden">
 
       {/* Cabecera Principal */}
       <header className="relative z-50 max-w-7xl mx-auto px-4 sm:px-8 pt-8 sm:pt-12 pb-6 sm:pb-9 flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 sm:gap-6 border-b border-white/10 mb-8 sm:mb-10">
@@ -210,14 +210,14 @@ export default function App() {
               type="button"
               onClick={() => setIsFormOpen(true)}
               aria-haspopup="dialog"
-              className="order-first w-full sm:order-none sm:w-auto justify-center px-5 py-3 bg-linear-to-r from-cyan-500 via-indigo-500 to-purple-600 hover:from-cyan-400 hover:via-indigo-400 hover:to-purple-500 text-white font-black rounded-2xl shadow-lg shadow-indigo-500/20 flex items-center gap-2 cursor-pointer text-xs sm:text-sm tracking-wide uppercase"
+              className="order-first w-full sm:order-0 sm:w-auto justify-center px-5 py-3 bg-linear-to-r from-cyan-500 via-indigo-500 to-purple-600 hover:from-cyan-400 hover:via-indigo-400 hover:to-purple-500 text-white font-black rounded-2xl shadow-lg shadow-indigo-500/20 flex items-center gap-2 cursor-pointer text-xs sm:text-sm tracking-wide uppercase"
             >
               <span aria-hidden="true" className="text-lg leading-none">+</span> Añadir Evento
             </button>
 
             <details className="group relative">
               <summary className="flex cursor-pointer list-none items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-xs sm:text-sm font-semibold text-slate-200 transition-colors hover:bg-white/10 [&::-webkit-details-marker]:hidden">
-                Importar / exportar
+                <span>Importar / exportar</span>
                 <span aria-hidden="true" className="text-neutral-400 transition-transform group-open:rotate-180">▾</span>
               </summary>
               <div className="absolute right-0 z-40 mt-2 w-64 max-w-[calc(100vw-2rem)] rounded-2xl border border-white/15 bg-slate-900 p-3 shadow-2xl shadow-black/50">
