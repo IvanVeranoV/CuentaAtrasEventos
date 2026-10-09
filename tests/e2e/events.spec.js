@@ -87,6 +87,17 @@ test('adapts the event grid, form, and detail view to narrow screens without hor
   await addEvent(page, 'Evento móvil uno');
   await addEvent(page, 'Evento móvil dos');
   const eventGrid = page.locator('main > div.grid');
+  const eventCard = page.getByRole('button', { name: /Abrir detalles de Evento móvil uno/ });
+  const datePill = eventCard.locator('span.rounded-full');
+  const addEventButton = page.getByRole('button', { name: 'Añadir Evento' });
+
+  await expect(eventCard).toHaveClass(/rounded-2xl/);
+  await expect(datePill).toHaveClass(/bg-white\/10/);
+  await expect(datePill).toHaveClass(/px-2\.5/);
+  await expect(addEventButton).toHaveClass(/from-cyan-500/);
+  await expect(addEventButton).toHaveClass(/via-indigo-500/);
+  await expect(addEventButton).toHaveClass(/to-purple-600/);
+  await expect(eventCard.locator('.countdown-number')).toHaveCSS('font-family', /JetBrains Mono/);
 
   const gridColumns = async () => eventGrid.evaluate((element) =>
     getComputedStyle(element).gridTemplateColumns.split(' ').length
@@ -102,7 +113,8 @@ test('adapts the event grid, form, and detail view to narrow screens without hor
   expect(await gridColumns()).toBe(3);
 
   await page.setViewportSize({ width: 320, height: 640 });
-  await page.getByRole('button', { name: /Abrir detalles de Evento móvil uno/ }).click();
+  await eventCard.click();
   await expect(page.getByRole('dialog', { name: 'Evento móvil uno' })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  await expect(page.locator('.countdown-number').first()).toHaveCSS('font-family', /JetBrains Mono/);
 });
