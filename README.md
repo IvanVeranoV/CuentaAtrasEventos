@@ -15,6 +15,7 @@ Una aplicación web para crear y seguir eventos importantes con cuentas atrás e
 - Exportar e importar datos en formato JSON para moverlos entre dispositivos
 - Editar y eliminar eventos individualmente o vaciar la lista completa
 - Disfrutar de una interfaz responsive y visualmente cuidada
+- Usar una interfaz fluida en móviles, tabletas y escritorio, con tarjetas y contadores que se reorganizan según el ancho disponible
 - Recibir notificaciones claras para acciones importantes como importación o exportación
 - Navegar por los diálogos y controles con teclado y recibir etiquetas descriptivas para tecnologías de asistencia
 
@@ -77,7 +78,7 @@ npm run test:e2e
 npm run test:all
 ```
 
-Las pruebas están agrupadas en `tests/unit`, `tests/integration` y `tests/e2e`. Las unitarias e integración se ejecutan con Vitest y React Testing Library en jsdom; E2E usa Playwright y Chromium en `node_modules/playwright-core/.local-browsers`. `npm test` ejecuta todas las pruebas Vitest; `npm run test:all` ejecuta Vitest y Playwright.
+Las pruebas están agrupadas en `tests/unit`, `tests/integration` y `tests/e2e`. Las unitarias e integración se ejecutan con Vitest y React Testing Library en jsdom; E2E usa Playwright y Chromium en `node_modules/playwright-core/.local-browsers`. La suite E2E también comprueba la cuadrícula en anchos móvil, tableta y escritorio, y que el formulario y la vista de detalle no causen desbordamiento horizontal en un móvil estrecho. `npm test` ejecuta todas las pruebas Vitest; `npm run test:all` ejecuta Vitest y Playwright.
 
 “Regresión” describe el propósito de una prueba, no una capa técnica independiente: una regresión puede comprobarse con una prueba unitaria, de integración o E2E. Los casos existentes de persistencia, IDs, datos corruptos y accesibilidad están en sus respectivas capas y protegen esos comportamientos.
 

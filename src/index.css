@@ -31,7 +31,7 @@
   .countdown-number {
     display: inline-block;
     font-family: var(--font-mono);
-    font-size: clamp(2.5rem, 6vw, 5rem);
+    @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl;
     font-weight: 800;
     font-variant-numeric: tabular-nums;
     line-height: 1;
@@ -50,7 +50,7 @@
   }
 
   .countdown-label {
-    @apply mt-3 text-[10px] font-bold uppercase tracking-widest text-neutral-400 sm:text-xs;
+    @apply mt-3 text-xs sm:text-sm font-bold uppercase tracking-widest text-neutral-400;
   }
 }
 

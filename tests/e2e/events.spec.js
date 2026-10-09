@@ -62,3 +62,47 @@ test('imports events and exports the saved event list', async ({ page }) => {
   await page.reload();
   await expect(page.getByRole('button', { name: 'Abrir detalles de Evento importado' })).toBeVisible();
 });
+
+test('adapts the event grid, form, and detail view to narrow screens without horizontal overflow', async ({ page }) => {
+  await page.setViewportSize({ width: 680, height: 800 });
+  await page.goto('/');
+  const title = page.getByRole('heading', { name: 'Event Horizon' });
+  const titleLines = () => title.evaluate((element) => {
+    const range = document.createRange();
+    range.selectNodeContents(element);
+    return range.getClientRects().length;
+  });
+
+  expect(await titleLines()).toBe(1);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+
+  await page.setViewportSize({ width: 320, height: 640 });
+  await page.reload();
+
+  await page.getByRole('button', { name: 'Añadir Evento' }).click();
+  await expect(page.getByRole('dialog', { name: 'Crear Nuevo Evento' })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  await page.getByRole('button', { name: 'Cancelar' }).click();
+
+  await addEvent(page, 'Evento móvil uno');
+  await addEvent(page, 'Evento móvil dos');
+  const eventGrid = page.locator('main > div.grid');
+
+  const gridColumns = async () => eventGrid.evaluate((element) =>
+    getComputedStyle(element).gridTemplateColumns.split(' ').length
+  );
+
+  expect(await gridColumns()).toBe(1);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+
+  await page.setViewportSize({ width: 640, height: 800 });
+  expect(await gridColumns()).toBe(2);
+
+  await page.setViewportSize({ width: 1024, height: 800 });
+  expect(await gridColumns()).toBe(3);
+
+  await page.setViewportSize({ width: 320, height: 640 });
+  await page.getByRole('button', { name: /Abrir detalles de Evento móvil uno/ }).click();
+  await expect(page.getByRole('dialog', { name: 'Evento móvil uno' })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+});

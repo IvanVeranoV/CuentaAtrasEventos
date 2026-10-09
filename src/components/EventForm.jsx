@@ -69,7 +69,7 @@ export default function EventForm({ onClose, onAddEvent, onUpdateEvent, eventToE
         aria-hidden={isActive ? undefined : true}
         aria-labelledby="event-form-title"
         tabIndex={-1}
-        className="ui-panel relative w-full max-w-md p-6"
+        className="ui-panel relative w-full max-w-md p-4 sm:p-6"
       >
 
         {/* Botón Cerrar */}
@@ -114,7 +114,7 @@ export default function EventForm({ onClose, onAddEvent, onUpdateEvent, eventToE
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label htmlFor="modal-date" className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
                 Fecha *
@@ -132,7 +132,7 @@ export default function EventForm({ onClose, onAddEvent, onUpdateEvent, eventToE
 
             <div>
               <label htmlFor="modal-time" className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
-                Hora <span className="text-slate-400 font-normal text-[10px]">(Opcional)</span>
+                Hora <span className="text-slate-400 text-xs font-normal">(Opcional)</span>
               </label>
               <input
                 id="modal-time"

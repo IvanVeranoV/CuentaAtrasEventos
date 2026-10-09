@@ -167,18 +167,18 @@ export default function App() {
   });
 
   return (
-    <div className="min-h-screen bg-[#0a0a0c] text-slate-100 font-sans pb-24 relative overflow-x-hidden">
+    <div className="min-h-screen bg-[#0a0a0c] text-slate-100 font-sans pb-16 sm:pb-24 relative overflow-x-hidden">
 
       {/* Cabecera Principal */}
-      <header className="relative z-50 max-w-7xl mx-auto px-6 pt-14 pb-9 flex flex-col sm:flex-row justify-between items-center gap-7 border-b border-white/10 mb-16">
-        <div>
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight bg-clip-text text-transparent bg-linear-to-r from-cyan-400 via-indigo-400 to-purple-500">
+      <header className="relative z-50 max-w-7xl mx-auto px-4 sm:px-8 pt-8 sm:pt-12 pb-6 sm:pb-9 flex flex-col lg:flex-row lg:flex-wrap justify-between items-stretch lg:items-center gap-4 sm:gap-6 border-b border-white/10 mb-10 sm:mb-16">
+        <div className="w-full min-w-0 lg:w-auto lg:flex-1 lg:basis-64">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight bg-clip-text text-transparent bg-linear-to-r from-cyan-400 via-indigo-400 to-purple-500">
             Event Horizon
           </h1>
-          <p className="text-neutral-400 text-sm mt-1">Tus cuentas atrás en tiempo real de forma local.</p>
+          <p className="text-neutral-400 text-xs sm:text-sm mt-1">Tus cuentas atrás en tiempo real de forma local.</p>
         </div>
 
-        <label className="ui-glass flex cursor-pointer items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-200">
+        <label className="ui-glass flex w-full lg:w-auto cursor-pointer items-center justify-between lg:justify-start gap-3 rounded-xl px-4 py-3 text-xs sm:text-sm font-medium text-slate-200">
           <span>Contar fines de semana</span>
           <input
             type="checkbox"
@@ -194,19 +194,19 @@ export default function App() {
         </label>
 
         {/* 🎯 Controles de Sincronización Minimalistas */}
-        <div className="ui-glass flex items-center gap-4 rounded-2xl p-2">
-          <div className="flex gap-2">
+        <div className="ui-glass flex w-full lg:w-auto items-center justify-between gap-3 sm:gap-4 rounded-2xl p-2">
+          <div className="flex min-w-0 flex-1 lg:flex-initial gap-2">
             <button
               type="button"
               onClick={exportToJSON}
-              className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 font-semibold rounded-xl text-xs cursor-pointer border border-slate-800"
+              className="flex-1 lg:flex-initial px-3 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 font-semibold rounded-xl text-xs sm:text-sm cursor-pointer border border-slate-800"
             >
               💾 Exportar
             </button>
             <button
               type="button"
               onClick={() => fileInputRef.current.click()}
-              className="px-3 py-1.5 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 font-semibold rounded-xl text-xs cursor-pointer border border-cyan-500/20"
+              className="flex-1 lg:flex-initial px-3 py-2 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 font-semibold rounded-xl text-xs sm:text-sm cursor-pointer border border-cyan-500/20"
             >
               📂 Importar
             </button>
@@ -218,11 +218,11 @@ export default function App() {
               type="button"
               aria-label="Información sobre la sincronización"
               aria-describedby="sync-tooltip"
-              className="w-6 h-6 rounded-full bg-slate-800 text-slate-300 text-xs font-serif flex items-center justify-center cursor-help group-hover:bg-slate-700 group-hover:text-white"
+              className="w-8 h-8 shrink-0 rounded-full bg-slate-800 text-slate-300 text-xs font-serif flex items-center justify-center cursor-help group-hover:bg-slate-700 group-hover:text-white"
             >
               i
             </button>
-            <div id="sync-tooltip" role="tooltip" className="pointer-events-none absolute right-0 top-8 z-9999 w-60 rounded-xl border border-white/10 bg-slate-900 p-3 text-neutral-300 text-xs shadow-2xl opacity-0 transition duration-200 leading-relaxed group-hover:opacity-100 group-focus-within:opacity-100">
+            <div id="sync-tooltip" role="tooltip" className="pointer-events-none absolute right-0 top-8 z-9999 w-60 max-w-[calc(100vw-2rem)] rounded-xl border border-white/10 bg-slate-900 p-3 text-neutral-300 text-xs shadow-2xl opacity-0 transition duration-200 leading-relaxed group-hover:opacity-100 group-focus-within:opacity-100">
               <span className="font-bold text-slate-200 block mb-1">Sincronización Portátil</span>
               <span className="text-white">Usa Exportar</span> para guardar tus eventos en un archivo. Pásalo a tu móvil u otro navegador e indícalo en <span className="text-white">Importar</span> para verlos ahí.
             </div>
@@ -233,21 +233,21 @@ export default function App() {
         <button type="button"
           onClick={() => setIsDeleteAllModalOpen(true)}
           title="Eliminar todos los eventos"
-          className="px-3 py-2 text-xs font-bold uppercase tracking-wider bg-red-950/40 hover:bg-red-950/80 text-red-400 border border-red-900/30 hover:border-red-800 rounded-xl backdrop-blur-sm cursor-pointer flex items-center gap-1.5 shadow-md"
+          className="w-full lg:w-auto px-3 py-3 sm:py-2 text-xs sm:text-sm font-bold uppercase tracking-wider bg-red-950/40 hover:bg-red-950/80 text-red-400 border border-red-900/30 hover:border-red-800 rounded-xl backdrop-blur-sm cursor-pointer flex items-center justify-center gap-1.5 shadow-md"
         >
           Vaciar Todo
         </button></header>
 
       {/* Grid Central de Eventos (Ocupa el ancho al completo) */}
-      <main className="max-w-7xl mx-auto px-6">
+      <main className="max-w-7xl mx-auto px-4 sm:px-8">
         {events.length === 0 ? (
-          <div className="ui-glass text-center py-32 border-dashed rounded-3xl">
-            <p className="text-neutral-400 text-base max-w-sm mx-auto">
+          <div className="ui-glass text-center px-4 py-16 sm:px-8 sm:py-24 border-dashed rounded-3xl">
+            <p className="text-neutral-400 text-sm sm:text-base max-w-sm mx-auto">
               Tu horizonte está vacío. Haz clic en el botón inferior para programar tu primer momento especial.
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 xl:gap-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {events.map(event => (
               <EventCard
                 key={event.id}
@@ -261,12 +261,12 @@ export default function App() {
         )}
       </main>
 
-      <div className="mx-auto mt-10 flex justify-center px-6">
+      <div className="mx-auto mt-8 sm:mt-10 flex justify-center px-4 sm:px-8">
         <button
           type="button"
           onClick={() => setIsFormOpen(true)}
           aria-haspopup="dialog"
-          className="px-6 py-4 bg-linear-to-r from-cyan-500 via-indigo-500 to-purple-600 hover:from-cyan-400 hover:via-indigo-400 hover:to-purple-500 text-white font-black rounded-2xl shadow-2xl shadow-indigo-500/30 hover:scale-105 flex items-center gap-3 cursor-pointer text-sm tracking-wide uppercase"
+          className="w-full sm:w-auto justify-center px-5 sm:px-6 py-4 bg-linear-to-r from-cyan-500 via-indigo-500 to-purple-600 hover:from-cyan-400 hover:via-indigo-400 hover:to-purple-500 text-white font-black rounded-2xl shadow-2xl shadow-indigo-500/30 hover:scale-105 flex items-center gap-3 cursor-pointer text-xs sm:text-sm tracking-wide uppercase"
         >
           <span aria-hidden="true" className="text-lg leading-none">+</span> Añadir Evento
         </button>
@@ -314,7 +314,7 @@ export default function App() {
         message={notification.message}
       />
 
-      <footer className="max-w-7xl mx-auto mt-20 px-6 pt-8 border-t border-white/10 text-sm text-neutral-400 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <footer className="max-w-7xl mx-auto mt-16 sm:mt-20 px-4 sm:px-8 pt-6 sm:pt-8 border-t border-white/10 text-xs sm:text-sm text-neutral-400 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="text-center sm:text-left">
           <p className="font-semibold text-slate-300">Desarrollado por Iván Verano</p>
           <p className="mt-1">2026</p>
