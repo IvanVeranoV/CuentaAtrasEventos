@@ -94,7 +94,7 @@ export default function EventDetail({
         aria-labelledby="event-detail-title"
         tabIndex={-1}
         style={{ viewTransitionName: isClosing ? 'none' : `card-${event.id}` }}
-        className="fixed inset-0 z-50 flex flex-col justify-between bg-slate-950 text-white overflow-hidden"
+        className="fixed inset-0 z-50 flex flex-col justify-between bg-app-bg text-white overflow-hidden"
       >
       <img
         src={event.image}
@@ -111,7 +111,7 @@ export default function EventDetail({
         <button
           type="button"
           onClick={handleTransitionClose}
-          className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 active:scale-95 transition backdrop-blur-md rounded-xl border border-white/10 font-medium text-sm"
+          className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-xl border border-white/10 font-medium text-sm"
         >
           ← Volver al panel
         </button>
@@ -119,14 +119,14 @@ export default function EventDetail({
           <button
             type="button"
             onClick={() => onEdit(event)}
-            className="text-white hover:text-white/80 transition px-4 py-2 bg-white/10 hover:bg-white/20 active:scale-95 backdrop-blur-md rounded-xl border border-white/10 font-medium text-sm"
+            className="text-white hover:text-white/80 px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-xl border border-white/10 font-medium text-sm"
           >
             Editar
           </button>
           <button
             type="button"
             onClick={() => setIsConfirmOpen(true)}
-            className="text-rose-400 hover:text-rose-300 font-medium text-sm transition px-4 py-2 bg-rose-500/10 hover:bg-rose-500/20 active:scale-95 backdrop-blur-md rounded-xl border border-rose-500/20"
+            className="text-rose-400 hover:text-rose-300 font-medium text-sm px-4 py-2 bg-rose-500/10 hover:bg-rose-500/20 backdrop-blur-md rounded-xl border border-rose-500/20"
           >
             Eliminar
           </button>
@@ -135,35 +135,33 @@ export default function EventDetail({
 
       <main className="relative z-10 max-w-4xl w-full mx-auto px-6 py-12 flex flex-col items-center text-center my-auto">
 
-        <h1 id="event-detail-title" className="text-4xl sm:text-6xl font-black text-white mb-4 tracking-tight max-w-2xl leading-tight">
+        <h1 id="event-detail-title" className="w-full max-w-3xl text-center text-4xl sm:text-6xl font-black text-white mb-4 tracking-tight leading-tight">
           {event.title}
         </h1>
 
-        <p className="text-slate-400 text-base sm:text-lg mb-12 font-medium">
+        <p className="text-neutral-400 text-base sm:text-lg mb-6 font-medium">
           {formattedDate}
         </p>
 
-        {/* Subtítulo dinámico */}
-        <p className="text-cyan-400 sm:text-lg font-bold uppercase tracking-widest mb-12 bg-slate-950/50 px-4 py-1.5 rounded-full border border-slate-900/30 backdrop-blur-sm">
-          {timeLeft.isPast ? 'Tiempo transcurrido desde el evento' : formattedDate}
-        </p>
+        {timeLeft.isPast && (
+          <p className="text-neutral-400 text-xs sm:text-sm font-semibold uppercase tracking-widest mb-8">
+            Tiempo transcurrido desde el evento
+          </p>
+        )}
 
         {/* Marcadores numéricos */}
-        <div className="grid grid-cols-4 gap-4 sm:gap-8 max-w-2xl w-full">
+        <div className="grid grid-cols-4 gap-3 sm:gap-6 max-w-3xl w-full">
           {[
             { label: 'Días', val: timeLeft.days, key: 'days' },
             { label: 'Horas', val: timeLeft.hours, key: 'hours' },
             { label: 'Min', val: timeLeft.minutes, key: 'mins' },
             { label: 'Seg', val: timeLeft.seconds, key: 'secs' }
           ].map((item) => (
-            <div key={item.key} className="flex flex-col items-center p-4 bg-slate-900/60 border border-slate-800 rounded-2xl backdrop-blur-md">
-              <span className={`text-3xl sm:text-6xl font-black tracking-tight font-mono text-transparent bg-clip-text ${timeLeft.isPast
-                ? 'bg-linear-to-b from-amber-200 to-orange-500' // Tono cálido para eventos pasados
-                : 'bg-linear-to-b from-white to-slate-400'
-                }`}>
+            <div key={item.key} className="ui-glass flex flex-col items-center rounded-2xl p-4">
+              <span className={`countdown-number ${timeLeft.isPast ? 'countdown-number--past' : 'countdown-number--future'}`}>
                 {String(item.val).padStart(2, '0')}
               </span>
-              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 mt-2">
+              <span className="countdown-label">
                 {item.label}
               </span>
             </div>

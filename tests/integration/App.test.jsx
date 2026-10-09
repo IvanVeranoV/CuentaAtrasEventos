@@ -28,7 +28,7 @@ const createEventFromForm = async (title) => {
     target: { value: TEST_IMAGE }
   });
   fireEvent.click(screen.getByRole('button', { name: 'Guardar', exact: true }));
-  await screen.findByRole('button', { name: `Abrir detalles de ${title}` });
+  await screen.findByRole('button', { name: new RegExp(`Abrir detalles de ${title}`) });
 };
 
 beforeEach(() => {
@@ -120,7 +120,7 @@ describe('modo de cálculo de fines de semana', () => {
 
     render(<App />);
 
-    const eventCard = screen.getByRole('button', { name: 'Abrir detalles de Evento de prueba' });
+    const eventCard = screen.getByRole('button', { name: /Abrir detalles de Evento de prueba/ });
     const weekendSwitch = screen.getByRole('switch', { name: 'Contar fines de semana' });
 
     expect(weekendSwitch.checked).toBe(true);
@@ -146,7 +146,7 @@ describe('accesibilidad del formulario modal', () => {
     ]));
 
     render(<App />);
-    fireEvent.click(screen.getByRole('button', { name: 'Abrir detalles de Evento editable' }));
+    fireEvent.click(screen.getByRole('button', { name: /Abrir detalles de Evento editable/ }));
     const editButton = screen.getByRole('button', { name: 'Editar' });
     editButton.focus();
     fireEvent.click(editButton);
@@ -163,5 +163,38 @@ describe('accesibilidad del formulario modal', () => {
       expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Editar' }));
     });
     expect(screen.getByRole('dialog', { name: 'Evento editable' })).toBeTruthy();
+  });
+
+  it('expone el tooltip de sincronización al enfocarlo y conserva los encabezados de las tarjetas', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([
+      createStoredEvent({ title: 'Evento accesible' })
+    ]));
+
+    render(<App />);
+
+    const tooltipTrigger = screen.getByRole('button', { name: 'Información sobre la sincronización' });
+    tooltipTrigger.focus();
+
+    expect(tooltipTrigger.getAttribute('aria-describedby')).toBe('sync-tooltip');
+    expect(screen.getByRole('tooltip').textContent).toContain('Usa Exportar');
+    expect(screen.getByRole('heading', { level: 2, name: 'Evento accesible' })).toBeTruthy();
+  });
+
+  it('mantiene el foco dentro de la vista de detalle al navegar con Tab', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([
+      createStoredEvent({ title: 'Evento enfocable' })
+    ]));
+
+    render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: /Abrir detalles de Evento enfocable/ }));
+
+    const backButton = screen.getByRole('button', { name: '← Volver al panel' });
+    const deleteButton = screen.getByRole('button', { name: 'Eliminar' });
+
+    expect(document.activeElement).toBe(backButton);
+    fireEvent.keyDown(document, { key: 'Tab', shiftKey: true });
+    expect(document.activeElement).toBe(deleteButton);
+    fireEvent.keyDown(document, { key: 'Tab' });
+    expect(document.activeElement).toBe(backButton);
   });
 });

@@ -1,28 +1,19 @@
-import { useEffect } from 'react';
 import useDialogAccessibility from '../hooks/useDialogAccessibility';
 
 export default function NotificationModal({ isOpen, onClose, type, title, message }) {
     const dialogRef = useDialogAccessibility({ isOpen, onClose });
-
-    // Auto-cerrar el modal después de 4 segundos para que no sea molesto si es un éxito
-    useEffect(() => {
-        if (isOpen && type === 'success') {
-            const timer = setTimeout(onClose, 4000);
-            return () => clearTimeout(timer);
-        }
-    }, [isOpen, type, onClose]);
 
     if (!isOpen) return null;
 
     const isSuccess = type === 'success';
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm bg-slate-950/60 animate-fade-in">
+        <div className="ui-overlay fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in">
             {/* Contenedor del Modal */}
-            <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="notification-title" tabIndex={-1} className="relative w-full max-w-sm bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl text-center">
+            <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="notification-title" aria-describedby="notification-description" tabIndex={-1} className="ui-panel relative w-full max-w-sm p-6 text-center">
 
                 {/* Icono Dinámico */}
-                <div className={`mx-auto flex h-14 w-14 items-center justify-center rounded-full mb-4 ${isSuccess ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'
+                <div aria-hidden="true" className={`mx-auto flex h-14 w-14 items-center justify-center rounded-full mb-4 ${isSuccess ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'
                     }`}>
                     {isSuccess ? (
                         // Icono de Éxito (Check)
@@ -41,7 +32,7 @@ export default function NotificationModal({ isOpen, onClose, type, title, messag
                 <h3 id="notification-title" className="text-lg font-bold text-white mb-2">
                     {title}
                 </h3>
-                <p className="text-sm text-slate-400 leading-relaxed mb-6">
+                <p id="notification-description" className="text-sm text-neutral-300 leading-relaxed mb-6">
                     {message}
                 </p>
 
@@ -49,7 +40,7 @@ export default function NotificationModal({ isOpen, onClose, type, title, messag
                 <button
                     type="button"
                     onClick={onClose}
-                    className={`w-full py-2.5 rounded-xl font-semibold text-sm transition active:scale-95 cursor-pointer ${isSuccess
+                    className={`w-full py-2.5 rounded-xl font-semibold text-sm cursor-pointer ${isSuccess
                         ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/20'
                         : 'bg-slate-800 hover:bg-slate-700 text-slate-300'
                         }`}

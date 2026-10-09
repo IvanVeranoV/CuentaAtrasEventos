@@ -28,7 +28,7 @@ test('creates, updates, persists, and deletes an event', async ({ page }) => {
   await expect(updatedEvent).toBeVisible();
   await updatedEvent.click();
   await page.getByRole('button', { name: 'Eliminar', exact: true }).click();
-  await page.getByRole('dialog', { name: '¿Eliminar evento?' })
+  await page.getByRole('alertdialog', { name: '¿Eliminar evento?' })
     .getByRole('button', { name: 'Eliminar evento' }).click();
 
   await expect(page.getByRole('button', { name: 'Abrir detalles de Viaje actualizado' })).toHaveCount(0);

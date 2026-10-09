@@ -167,42 +167,46 @@ export default function App() {
   });
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans pb-24 relative overflow-x-hidden">
+    <div className="min-h-screen bg-[#0a0a0c] text-slate-100 font-sans pb-24 relative overflow-x-hidden">
 
       {/* Cabecera Principal */}
-      <header className="relative z-50 max-w-7xl mx-auto px-6 pt-12 pb-6 flex flex-col sm:flex-row justify-between items-center gap-6 border-b border-slate-900 mb-12">
+      <header className="relative z-50 max-w-7xl mx-auto px-6 pt-14 pb-9 flex flex-col sm:flex-row justify-between items-center gap-7 border-b border-white/10 mb-16">
         <div>
           <h1 className="text-3xl sm:text-4xl font-black tracking-tight bg-clip-text text-transparent bg-linear-to-r from-cyan-400 via-indigo-400 to-purple-500">
             Event Horizon
           </h1>
-          <p className="text-slate-500 text-sm mt-1">Tus cuentas atrás en tiempo real de forma local.</p>
+          <p className="text-neutral-400 text-sm mt-1">Tus cuentas atrás en tiempo real de forma local.</p>
         </div>
 
-        <label className="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-900/60 px-4 py-3 text-sm font-medium text-slate-300">
+        <label className="ui-glass flex cursor-pointer items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-200">
           <span>Contar fines de semana</span>
           <input
             type="checkbox"
             role="switch"
             checked={countWeekends}
             onChange={(event) => setCountWeekends(event.target.checked)}
-            className="h-5 w-9 cursor-pointer accent-cyan-500"
+            className="peer sr-only"
+          />
+          <span
+            aria-hidden="true"
+            className="relative h-6 w-11 shrink-0 rounded-full border border-white/10 bg-slate-800 transition-colors duration-200 after:absolute after:left-0.5 after:top-0.5 after:h-4 after:w-4 after:rounded-full after:bg-neutral-400 after:transition-transform after:duration-200 peer-checked:border-cyan-400/40 peer-checked:bg-cyan-500/30 peer-checked:after:translate-x-5 peer-checked:after:bg-cyan-300 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-cyan-400"
           />
         </label>
 
         {/* 🎯 Controles de Sincronización Minimalistas */}
-        <div className="flex items-center gap-4 bg-slate-900/40 p-2 rounded-2xl border border-slate-900 backdrop-blur-sm">
+        <div className="ui-glass flex items-center gap-4 rounded-2xl p-2">
           <div className="flex gap-2">
             <button
               type="button"
               onClick={exportToJSON}
-              className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 font-semibold rounded-xl text-xs transition cursor-pointer border border-slate-800"
+              className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 font-semibold rounded-xl text-xs cursor-pointer border border-slate-800"
             >
               💾 Exportar
             </button>
             <button
               type="button"
               onClick={() => fileInputRef.current.click()}
-              className="px-3 py-1.5 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 font-semibold rounded-xl text-xs transition cursor-pointer border border-cyan-500/20"
+              className="px-3 py-1.5 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 font-semibold rounded-xl text-xs cursor-pointer border border-cyan-500/20"
             >
               📂 Importar
             </button>
@@ -210,21 +214,26 @@ export default function App() {
 
           {/* Botón de Información descriptiva */}
           <div className="group relative">
-            <button type="button" aria-label="Mostrar información sobre la sincronización" className="w-6 h-6 rounded-full bg-slate-800 text-slate-400 text-xs font-serif flex items-center justify-center cursor-help group-hover:bg-slate-700 group-hover:text-slate-200 transition">
+            <button
+              type="button"
+              aria-label="Información sobre la sincronización"
+              aria-describedby="sync-tooltip"
+              className="w-6 h-6 rounded-full bg-slate-800 text-slate-300 text-xs font-serif flex items-center justify-center cursor-help group-hover:bg-slate-700 group-hover:text-white"
+            >
               i
             </button>
-            <div role="tooltip" className="pointer-events-none absolute right-0 top-8 z-9999 w-60 p-3 bg-slate-900 border border-slate-800 text-slate-400 text-xs rounded-xl shadow-2xl opacity-0 group-hover:opacity-100 transition duration-200 leading-relaxed">
+            <div id="sync-tooltip" role="tooltip" className="pointer-events-none absolute right-0 top-8 z-9999 w-60 rounded-xl border border-white/10 bg-slate-900 p-3 text-neutral-300 text-xs shadow-2xl opacity-0 transition duration-200 leading-relaxed group-hover:opacity-100 group-focus-within:opacity-100">
               <span className="font-bold text-slate-200 block mb-1">Sincronización Portátil</span>
               <span className="text-white">Usa Exportar</span> para guardar tus eventos en un archivo. Pásalo a tu móvil u otro navegador e indícalo en <span className="text-white">Importar</span> para verlos ahí.
             </div>
           </div>
         </div>
-        <input type="file" ref={fileInputRef} onChange={importFromJSON} accept=".json" className="hidden" />
+        <input type="file" ref={fileInputRef} onChange={importFromJSON} accept=".json" className="hidden" aria-label="Seleccionar archivo JSON para importar" />
 
         <button type="button"
           onClick={() => setIsDeleteAllModalOpen(true)}
           title="Eliminar todos los eventos"
-          className="px-3 py-2 text-xs font-bold uppercase tracking-wider bg-red-950/40 hover:bg-red-950/80 text-red-400 border border-red-900/30 hover:border-red-800 rounded-xl transition backdrop-blur-sm cursor-pointer flex items-center gap-1.5 shadow-md"
+          className="px-3 py-2 text-xs font-bold uppercase tracking-wider bg-red-950/40 hover:bg-red-950/80 text-red-400 border border-red-900/30 hover:border-red-800 rounded-xl backdrop-blur-sm cursor-pointer flex items-center gap-1.5 shadow-md"
         >
           Vaciar Todo
         </button></header>
@@ -232,13 +241,13 @@ export default function App() {
       {/* Grid Central de Eventos (Ocupa el ancho al completo) */}
       <main className="max-w-7xl mx-auto px-6">
         {events.length === 0 ? (
-          <div className="text-center py-32 border border-dashed border-slate-800 rounded-3xl bg-slate-900/10">
-            <p className="text-slate-600 text-base max-w-sm mx-auto">
+          <div className="ui-glass text-center py-32 border-dashed rounded-3xl">
+            <p className="text-neutral-400 text-base max-w-sm mx-auto">
               Tu horizonte está vacío. Haz clic en el botón inferior para programar tu primer momento especial.
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 xl:gap-10">
             {events.map(event => (
               <EventCard
                 key={event.id}
@@ -252,14 +261,14 @@ export default function App() {
         )}
       </main>
 
-      {/* 🎯 BOTÓN FLOTANTE VIBRANTE: Para lanzar el Modal */}
-      <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-40">
+      <div className="mx-auto mt-10 flex justify-center px-6">
         <button
           type="button"
           onClick={() => setIsFormOpen(true)}
-          className="px-6 py-4 bg-linear-to-r from-cyan-500 via-indigo-500 to-purple-600 hover:from-cyan-400 hover:via-indigo-400 hover:to-purple-500 text-white font-black rounded-2xl shadow-2xl shadow-indigo-500/30 transition hover:scale-105 active:scale-95 flex items-center gap-3 cursor-pointer text-sm tracking-wide uppercase"
+          aria-haspopup="dialog"
+          className="px-6 py-4 bg-linear-to-r from-cyan-500 via-indigo-500 to-purple-600 hover:from-cyan-400 hover:via-indigo-400 hover:to-purple-500 text-white font-black rounded-2xl shadow-2xl shadow-indigo-500/30 hover:scale-105 flex items-center gap-3 cursor-pointer text-sm tracking-wide uppercase"
         >
-          <span className="text-lg leading-none">+</span> Añadir Evento
+          <span aria-hidden="true" className="text-lg leading-none">+</span> Añadir Evento
         </button>
       </div>
 
@@ -305,7 +314,7 @@ export default function App() {
         message={notification.message}
       />
 
-      <footer className="max-w-7xl mx-auto mt-20 px-6 pt-8 border-t border-slate-900 text-sm text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <footer className="max-w-7xl mx-auto mt-20 px-6 pt-8 border-t border-white/10 text-sm text-neutral-400 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="text-center sm:text-left">
           <p className="font-semibold text-slate-300">Desarrollado por Iván Verano</p>
           <p className="mt-1">2026</p>

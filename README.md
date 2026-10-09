@@ -16,6 +16,7 @@ Una aplicación web para crear y seguir eventos importantes con cuentas atrás e
 - Editar y eliminar eventos individualmente o vaciar la lista completa
 - Disfrutar de una interfaz responsive y visualmente cuidada
 - Recibir notificaciones claras para acciones importantes como importación o exportación
+- Navegar por los diálogos y controles con teclado y recibir etiquetas descriptivas para tecnologías de asistencia
 
 El interruptor «Contar fines de semana» aplica globalmente tanto a las tarjetas del panel como a la vista de detalle. Activado (opción predeterminada), el contador incluye todos los días; desactivado, no contabiliza sábados ni domingos.
 
@@ -79,6 +80,12 @@ npm run test:all
 Las pruebas están agrupadas en `tests/unit`, `tests/integration` y `tests/e2e`. Las unitarias e integración se ejecutan con Vitest y React Testing Library en jsdom; E2E usa Playwright y Chromium en `node_modules/playwright-core/.local-browsers`. `npm test` ejecuta todas las pruebas Vitest; `npm run test:all` ejecuta Vitest y Playwright.
 
 “Regresión” describe el propósito de una prueba, no una capa técnica independiente: una regresión puede comprobarse con una prueba unitaria, de integración o E2E. Los casos existentes de persistencia, IDs, datos corruptos y accesibilidad están en sus respectivas capas y protegen esos comportamientos.
+
+## ♿ Accesibilidad
+
+Los diálogos gestionan el foco inicial, el ciclo de tabulación, el cierre con Escape y la devolución del foco al cerrarse. Los controles y mensajes incluyen nombres o descripciones accesibles, y los avisos de éxito permanecen visibles hasta que se cierran explícitamente. La interfaz también respeta la preferencia del sistema para reducir movimiento.
+
+Las pruebas de integración cubren el acceso por teclado a la información de sincronización y la navegación por teclado en la vista de detalle. Estas medidas no representan por sí solas una certificación de conformidad WCAG; para ello se requieren auditorías adicionales, incluidas pruebas con tecnologías de asistencia.
 
 ## 📁 Estructura del proyecto
 

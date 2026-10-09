@@ -61,7 +61,7 @@ export default function EventForm({ onClose, onAddEvent, onUpdateEvent, eventToE
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-md animate-fade-in">
+    <div className="ui-overlay fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in">
       <div
         ref={dialogRef}
         role="dialog"
@@ -69,14 +69,15 @@ export default function EventForm({ onClose, onAddEvent, onUpdateEvent, eventToE
         aria-hidden={isActive ? undefined : true}
         aria-labelledby="event-form-title"
         tabIndex={-1}
-        className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl relative"
+        className="ui-panel relative w-full max-w-md p-6"
       >
 
         {/* Botón Cerrar */}
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-4 right-4 text-slate-400 hover:text-white transition cursor-pointer"
+          aria-label="Cerrar formulario"
+          className="absolute top-4 right-4 text-slate-400 hover:text-white cursor-pointer"
         >
           ✕
         </button>
@@ -104,10 +105,10 @@ export default function EventForm({ onClose, onAddEvent, onUpdateEvent, eventToE
                 setTitle(e.target.value);
                 setTitleError(false);
               }}
-              className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:outline-none focus:border-cyan-500 text-white disabled:opacity-50 transition"
+              className="ui-input"
             />
             {titleError && (
-              <p id="modal-title-error" className="mt-2 text-sm text-rose-400">
+              <p id="modal-title-error" role="alert" className="mt-2 text-sm text-rose-300">
                 El nombre del evento no puede estar vacío.
               </p>
             )}
@@ -125,13 +126,13 @@ export default function EventForm({ onClose, onAddEvent, onUpdateEvent, eventToE
                 disabled={isLoading}
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:outline-none focus:border-cyan-500 text-white disabled:opacity-50 transition text-sm cursor-pointer"
+                className="ui-input cursor-pointer text-sm"
               />
             </div>
 
             <div>
               <label htmlFor="modal-time" className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
-                Hora <span className="text-slate-600 font-normal text-[10px]">(Opcional)</span>
+                Hora <span className="text-slate-400 font-normal text-[10px]">(Opcional)</span>
               </label>
               <input
                 id="modal-time"
@@ -139,7 +140,7 @@ export default function EventForm({ onClose, onAddEvent, onUpdateEvent, eventToE
                 disabled={isLoading}
                 value={time}
                 onChange={(e) => setTime(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:outline-none focus:border-cyan-500 text-white disabled:opacity-50 transition text-sm cursor-pointer"
+                className="ui-input cursor-pointer text-sm"
               />
             </div>
           </div>
@@ -155,7 +156,7 @@ export default function EventForm({ onClose, onAddEvent, onUpdateEvent, eventToE
               value={image}
               onChange={(e) => setImage(e.target.value)}
               placeholder="Vacío para búsqueda automática"
-              className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:outline-none focus:border-cyan-500 text-white placeholder:text-slate-600 text-sm disabled:opacity-50 transition"
+              className="ui-input text-sm placeholder:text-neutral-400"
             />
           </div>
 
@@ -164,14 +165,14 @@ export default function EventForm({ onClose, onAddEvent, onUpdateEvent, eventToE
               type="button"
               onClick={onClose}
               disabled={isLoading}
-              className="flex-1 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold rounded-xl transition cursor-pointer text-sm"
+              className="flex-1 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold rounded-xl cursor-pointer text-sm"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={isLoading}
-              className="flex-1 py-3 bg-linear-to-r from-cyan-500 to-indigo-500 hover:from-cyan-400 hover:to-indigo-400 text-white font-bold rounded-xl transition shadow-lg shadow-cyan-500/20 active:scale-[0.98] cursor-pointer disabled:cursor-not-allowed text-sm"
+              className="flex-1 py-3 bg-linear-to-r from-cyan-500 to-indigo-500 hover:from-cyan-400 hover:to-indigo-400 text-white font-bold rounded-xl shadow-lg shadow-cyan-500/20 cursor-pointer disabled:cursor-not-allowed text-sm"
             >
               {isLoading ? 'Buscando foto...' : eventToEdit ? 'Guardar cambios' : 'Guardar'}
             </button>
