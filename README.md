@@ -1,6 +1,6 @@
 # Cuenta Atrás Eventos
 
-Una aplicación web moderna para crear y seguir eventos importantes con un diseño visual atractivo y una experiencia intuitiva. Perfecta para contar los días, horas y minutos que faltan para cumpleaños, viajes, lanzamientos, reuniones o momentos especiales.
+Una aplicación web para crear y seguir eventos importantes con cuentas atrás en tiempo real. Permite guardar eventos localmente, gestionar su información e importar o exportar listas en JSON.
 
 ![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react)
 ![Vite](https://img.shields.io/badge/Vite-8-646CFF?style=for-the-badge&logo=vite)
@@ -9,34 +9,41 @@ Una aplicación web moderna para crear y seguir eventos importantes con un dise�
 ## ✨ ¿Qué puedes hacer con esta app?
 
 - Crear eventos personalizados con título, fecha e imagen
+- Buscar automáticamente una imagen en Wikipedia cuando no se proporciona una URL
 - Ver un contador regresivo en tiempo real para cada evento
 - Guardar tus eventos de forma local en el navegador
 - Exportar e importar datos en formato JSON para moverlos entre dispositivos
+- Editar y eliminar eventos individualmente o vaciar la lista completa
 - Disfrutar de una interfaz responsive y visualmente cuidada
 - Recibir notificaciones claras para acciones importantes como importación o exportación
+
+La utilidad `getBusinessCountdownParts` también permite calcular tiempo excluyendo sábados y domingos, aunque esa variante no se muestra actualmente en la interfaz.
 
 ## 🛠️ Tecnologías empleadas
 
 - React 19
 - Vite 8
 - JavaScript moderno
-- CSS personalizado y diseño responsive
+- Tailwind CSS 4 y diseño responsive
 - LocalStorage para persistencia de datos
+- Vitest, React Testing Library y Playwright para pruebas automatizadas
 
 ## 🚀 Cómo empezar
 
 ### Requisitos
 
-- Node.js 18 o superior
-- npm o pnpm
+- Node.js `^20.19.0` o `>=22.12.0` (requisito declarado en `package.json`)
+- npm
 
 ### Instalación
 
 ```bash
 git clone https://github.com/IvanVeranoV/CuentaAtrasEventos.git
 cd CuentaAtrasEventos
-npm install
+npm ci
 ```
+
+Esto instala las dependencias JavaScript del proyecto. Requisitos y detalles: [DEPENDENCIES.md](./DEPENDENCIES.md).
 
 ### Ejecutar en modo desarrollo
 
@@ -54,33 +61,55 @@ npm run build
 
 ### Ejecutar las pruebas automatizadas
 
+Las pruebas unitarias y de integración no requieren navegador adicional. Para ejecutar la suite E2E, primero instala Chromium dentro del proyecto:
+
 ```bash
-npm test
+npm run setup:browsers
 ```
 
-Las pruebas de integración se ejecutan con Vitest y React Testing Library en un entorno jsdom.
+Después puedes ejecutar las pruebas por capa o todas juntas:
+
+```bash
+npm run test:unit
+npm run test:integration
+npm run test:e2e
+npm run test:all
+```
+
+Las pruebas están agrupadas en `tests/unit`, `tests/integration` y `tests/e2e`. Las unitarias e integración se ejecutan con Vitest y React Testing Library en jsdom; E2E usa Playwright y Chromium en `node_modules/playwright-core/.local-browsers`. `npm test` ejecuta todas las pruebas Vitest; `npm run test:all` ejecuta Vitest y Playwright.
+
+“Regresión” describe el propósito de una prueba, no una capa técnica independiente: una regresión puede comprobarse con una prueba unitaria, de integración o E2E. Los casos existentes de persistencia, IDs, datos corruptos y accesibilidad están en sus respectivas capas y protegen esos comportamientos.
 
 ## 📁 Estructura del proyecto
 
 ```text
 src/
 ├── components/
-│   ├── EventCard.jsx
-│   ├── EventDetail.jsx
-│   ├── EventForm.jsx
-│   ├── NotificationModal.jsx
-│   └── ConfirmModal.jsx
+├── hooks/
+├── utils/
 ├── App.jsx
-├── main.jsx
-└── index.css
+├── App.css
+├── index.css
+└── main.jsx
+tests/
+├── unit/
+│   ├── countdown.test.js
+│   ├── eventIds.test.js
+│   └── searchEventImage.test.js
+├── integration/
+│   └── App.test.jsx
+└── e2e/
+    └── events.spec.js
+playwright.config.js
+DEPENDENCIES.md
 ```
 
 ## 🎯 Flujo de uso
 
-1. Añade un nuevo evento desde el formulario.
-2. Define su fecha y personaliza los detalles.
-3. Observa el contador regresivo en la tarjeta correspondiente.
-4. Exporta tu lista como JSON si deseas usarla en otro dispositivo.
+1. Añade un evento y define su nombre y fecha; la hora y la URL de la imagen son opcionales.
+2. Si no indicas una imagen, la aplicación intenta buscarla automáticamente y usa una imagen de respaldo si no encuentra ninguna.
+3. Consulta la cuenta atrás, edita o elimina el evento desde su detalle.
+4. Importa o exporta eventos como JSON para combinarlos o moverlos entre dispositivos. Los datos principales se guardan en el almacenamiento local del navegador.
 
 ## 🌟 Estado del proyecto
 

@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
-import App from './App';
+import App from '../../src/App';
 
 const STORAGE_KEY = 'countdown_events';
 const TEST_IMAGE = 'https://example.test/event.jpg';
