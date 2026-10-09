@@ -1,26 +1,32 @@
 import { useEffect, useState } from 'react';
 import { flushSync } from 'react-dom';
-import { getCountdownParts } from '../utils/countdown';
+import { getBusinessCountdownParts, getCountdownParts } from '../utils/countdown';
 
-export default function EventCard({ event, onClick, isSelected }) {
+export default function EventCard({ event, onClick, isSelected, countWeekends = true }) {
   // 🎯 Estado estructurado para almacenar los días y si la fecha ya pasó
   const [timeData, setTimeData] = useState({ days: 0, isPast: false });
   const [clicked, setClicked] = useState(false);
 
   // 🎯 SOLUCIÓN SONARQUBE: Derivamos el estado real en cada render.
   const isCurrentlyClicked = isSelected ? false : clicked;
+  const isSingleDay = timeData.days === 1;
+  const dayLabel = isSingleDay ? 'día' : 'días';
+  const dayStatus = timeData.isPast
+    ? (isSingleDay ? 'transcurrido' : 'transcurridos')
+    : (isSingleDay ? 'restante' : 'restantes');
 
   useEffect(() => {
     const calculateTime = () => {
       const targetDate = event.date.includes('T') ? event.date : `${event.date}T00:00`;
-      const { days, isPast } = getCountdownParts(new Date(targetDate));
+      const getParts = countWeekends ? getCountdownParts : getBusinessCountdownParts;
+      const { days, isPast } = getParts(new Date(targetDate));
       setTimeData({ days, isPast });
     };
 
     calculateTime();
     const intervalId = window.setInterval(calculateTime, 60_000);
     return () => window.clearInterval(intervalId);
-  }, [event.date]);
+  }, [event.date, countWeekends]);
 
   const runCardTransition = () => {
     const transition = document.startViewTransition(() => {
@@ -82,7 +88,7 @@ export default function EventCard({ event, onClick, isSelected }) {
           }`}>
           {timeData.days}{' '}
           <span className="text-sm font-medium text-slate-300 tracking-normal">
-            {timeData.isPast ? 'días transcurridos' : 'días restantes'}
+            {dayLabel} {dayStatus}
           </span>
         </p>
       </div>

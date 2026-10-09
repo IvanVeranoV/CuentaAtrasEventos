@@ -84,6 +84,7 @@ const getStoredEvents = () => {
 export default function App() {
   const [storedEvents] = useState(getStoredEvents);
   const [events, setEvents] = useState(storedEvents.events);
+  const [countWeekends, setCountWeekends] = useState(true);
   const eventIdCounter = useRef(0);
 
   const [selectedEventId, setSelectedEventId] = useState(null);
@@ -177,6 +178,17 @@ export default function App() {
           <p className="text-slate-500 text-sm mt-1">Tus cuentas atrás en tiempo real de forma local.</p>
         </div>
 
+        <label className="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-900/60 px-4 py-3 text-sm font-medium text-slate-300">
+          <span>Contar fines de semana</span>
+          <input
+            type="checkbox"
+            role="switch"
+            checked={countWeekends}
+            onChange={(event) => setCountWeekends(event.target.checked)}
+            className="h-5 w-9 cursor-pointer accent-cyan-500"
+          />
+        </label>
+
         {/* 🎯 Controles de Sincronización Minimalistas */}
         <div className="flex items-center gap-4 bg-slate-900/40 p-2 rounded-2xl border border-slate-900 backdrop-blur-sm">
           <div className="flex gap-2">
@@ -233,6 +245,7 @@ export default function App() {
                 event={event}
                 onClick={() => setSelectedEventId(event.id)}
                 isSelected={selectedEventId === event.id}
+                countWeekends={countWeekends}
               />
             ))}
           </div>
@@ -265,6 +278,7 @@ export default function App() {
           onDelete={deleteEvent}
           onEdit={handleEditEvent}
           isModalActive={!isFormOpen && !notification.isOpen}
+          countWeekends={countWeekends}
         />
       )}
 

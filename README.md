@@ -10,14 +10,14 @@ Una aplicación web para crear y seguir eventos importantes con cuentas atrás e
 
 - Crear eventos personalizados con título, fecha e imagen
 - Buscar automáticamente una imagen en Wikipedia cuando no se proporciona una URL
-- Ver un contador regresivo en tiempo real para cada evento
+- Ver un contador regresivo en tiempo real para cada evento y elegir si cuenta los fines de semana
 - Guardar tus eventos de forma local en el navegador
 - Exportar e importar datos en formato JSON para moverlos entre dispositivos
 - Editar y eliminar eventos individualmente o vaciar la lista completa
 - Disfrutar de una interfaz responsive y visualmente cuidada
 - Recibir notificaciones claras para acciones importantes como importación o exportación
 
-La utilidad `getBusinessCountdownParts` también permite calcular tiempo excluyendo sábados y domingos, aunque esa variante no se muestra actualmente en la interfaz.
+El interruptor «Contar fines de semana» aplica globalmente tanto a las tarjetas del panel como a la vista de detalle. Activado (opción predeterminada), el contador incluye todos los días; desactivado, no contabiliza sábados ni domingos.
 
 ## 🛠️ Tecnologías empleadas
 
@@ -106,10 +106,11 @@ DEPENDENCIES.md
 
 ## 🎯 Flujo de uso
 
-1. Añade un evento y define su nombre y fecha; la hora y la URL de la imagen son opcionales.
-2. Si no indicas una imagen, la aplicación intenta buscarla automáticamente y usa una imagen de respaldo si no encuentra ninguna.
-3. Consulta la cuenta atrás, edita o elimina el evento desde su detalle.
-4. Importa o exporta eventos como JSON para combinarlos o moverlos entre dispositivos. Los datos principales se guardan en el almacenamiento local del navegador.
+1. En el panel, activa o desactiva «Contar fines de semana» para elegir si las cuentas atrás incluyen sábados y domingos. El ajuste se aplica al panel y al detalle del evento.
+2. Añade un evento y define su nombre y fecha; la hora y la URL de la imagen son opcionales.
+3. Si no indicas una imagen, la aplicación intenta buscarla automáticamente y usa una imagen de respaldo si no encuentra ninguna.
+4. Consulta la cuenta atrás, edita o elimina el evento desde su detalle.
+5. Importa o exporta eventos como JSON para combinarlos o moverlos entre dispositivos. Los datos principales se guardan en el almacenamiento local del navegador.
 
 ## 🌟 Estado del proyecto
 

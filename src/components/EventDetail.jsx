@@ -1,10 +1,17 @@
 import { useEffect, useMemo, useState } from 'react';
 import { flushSync } from 'react-dom';
 import ConfirmModal from './ConfirmModal';
-import { getCountdownParts } from '../utils/countdown';
+import { getBusinessCountdownParts, getCountdownParts } from '../utils/countdown';
 import useDialogAccessibility from '../hooks/useDialogAccessibility';
 
-export default function EventDetail({ event, onClose, onDelete, onEdit, isModalActive = true }) {
+export default function EventDetail({
+  event,
+  onClose,
+  onDelete,
+  onEdit,
+  isModalActive = true,
+  countWeekends = true
+}) {
   const [timeLeft, setTimeLeft] = useState({
     isPast: false,
     days: 0,
@@ -33,7 +40,8 @@ export default function EventDetail({ event, onClose, onDelete, onEdit, isModalA
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     const calculateTime = () => {
-      setTimeLeft(getCountdownParts(eventDate));
+      const getParts = countWeekends ? getCountdownParts : getBusinessCountdownParts;
+      setTimeLeft(getParts(eventDate));
     };
 
     calculateTime();
@@ -42,7 +50,7 @@ export default function EventDetail({ event, onClose, onDelete, onEdit, isModalA
       document.body.style.overflow = '';
       clearInterval(timer);
     };
-  }, [eventDate]);
+  }, [eventDate, countWeekends]);
 
   const runDetailTransition = () => {
     document.startViewTransition(() => {

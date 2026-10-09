@@ -111,6 +111,34 @@ describe('persistencia e IDs de eventos', () => {
   });
 });
 
+describe('modo de cálculo de fines de semana', () => {
+  it('aplica el interruptor globalmente en las tarjetas y en la vista de detalle', async () => {
+    vi.spyOn(Date, 'now').mockReturnValue(new Date(2035, 0, 5, 12).getTime());
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([
+      createStoredEvent({ date: '2035-01-08T12:00' })
+    ]));
+
+    render(<App />);
+
+    const eventCard = screen.getByRole('button', { name: 'Abrir detalles de Evento de prueba' });
+    const weekendSwitch = screen.getByRole('switch', { name: 'Contar fines de semana' });
+
+    expect(weekendSwitch.checked).toBe(true);
+    expect(eventCard.textContent).toContain('3 días restantes');
+
+    fireEvent.click(weekendSwitch);
+
+    await waitFor(() => {
+      expect(eventCard.textContent).toContain('1 día restante');
+    });
+
+    fireEvent.click(eventCard);
+
+    const daysValue = screen.getByText('Días').previousElementSibling;
+    expect(daysValue.textContent).toBe('01');
+  });
+});
+
 describe('accesibilidad del formulario modal', () => {
   it('cierra el formulario con Escape, conserva el detalle y devuelve el foco a Editar', async () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify([
